@@ -27,7 +27,7 @@ function buildNavTexture(gridCols: number, gridRows: number) {
   const ctx = canvas.getContext("2d")!;
 
   // Use a small pixel font size so each character ≈ 5-6 grid cells wide
-  const fontSize = Math.max(6, Math.floor(gridRows * 0.022));
+  const fontSize = Math.max(8, Math.floor(gridRows * 0.044));
   ctx.font = `${fontSize}px monospace`;
   ctx.textBaseline = "top";
   ctx.fillStyle = "#fff";
