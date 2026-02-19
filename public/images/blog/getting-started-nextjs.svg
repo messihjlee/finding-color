@@ -1,0 +1,5 @@
+<svg width="800" height="500" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="500" fill="#1a1a2e"/>
+  <text x="400" y="240" text-anchor="middle" font-family="system-ui" font-size="48" font-weight="bold" fill="#e0e0e0">Next.js</text>
+  <text x="400" y="290" text-anchor="middle" font-family="system-ui" font-size="20" fill="#888">Getting Started</text>
+</svg>

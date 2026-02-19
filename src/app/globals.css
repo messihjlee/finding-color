@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #e8e4de;
+  --foreground: #1a1a18;
+  --muted: #7a7872;
+  --border: #ccc8c0;
+  --card: #f0ece6;
+}
+
+.dark {
+  --background: #1a1a18;
+  --foreground: #e8e4de;
+  --muted: #9a9890;
+  --border: #2e2e2a;
+  --card: #242420;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --font-sans: var(--font-inter);
+}
+
+
+/* Hide cursor only on the WebGL canvas container */
+.canvas-cursor {
+  cursor: none;
+}
+.canvas-cursor canvas {
+  cursor: none;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background-color: var(--foreground);
+  color: var(--background);
+}

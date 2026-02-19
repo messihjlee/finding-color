@@ -1,0 +1,82 @@
+---
+title: "Dark Mode with Tailwind CSS v4"
+date: "2026-02-01"
+description: "How to implement a robust dark mode toggle using Tailwind CSS v4 and next-themes."
+coverImage: "/images/blog/tailwind-dark-mode.svg"
+tags: ["Tailwind CSS", "CSS", "Dark Mode"]
+---
+
+Dark mode isn't just a trend — it's an accessibility feature. Here's how to implement it cleanly with Tailwind CSS v4.
+
+## The Setup
+
+Tailwind v4 uses a CSS-first configuration approach. Define your dark mode variant in `globals.css`:
+
+```css
+@custom-variant dark (&:is(.dark *));
+```
+
+Then define your color tokens using CSS custom properties:
+
+```css
+:root {
+  --background: #fafafa;
+  --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+}
+```
+
+## Using next-themes
+
+The `next-themes` library handles the hard parts: reading system preferences, persisting the user's choice, and avoiding flash of wrong theme.
+
+```tsx
+// providers.tsx
+"use client";
+
+import { ThemeProvider } from "next-themes";
+
+export function Providers({ children }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+## The Toggle Component
+
+A simple toggle button that switches between light and dark:
+
+```tsx
+"use client";
+
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
+
+export function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+
+  return (
+    <button onClick={() => setTheme(
+      resolvedTheme === "dark" ? "light" : "dark"
+    )}>
+      {resolvedTheme === "dark" ? <Sun /> : <Moon />}
+    </button>
+  );
+}
+```
+
+## Tips
+
+1. **Always use `resolvedTheme`** instead of `theme` — it accounts for the system preference
+2. **Add `suppressHydrationWarning`** to your `<html>` tag to avoid hydration mismatch warnings
+3. **Show a placeholder** while mounting to prevent layout shift
+4. **Use CSS transitions** on background-color and color for smooth switches
+
+Dark mode done right feels invisible — users should never notice the transition, just the comfort.

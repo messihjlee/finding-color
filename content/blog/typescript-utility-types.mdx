@@ -1,0 +1,116 @@
+---
+title: "TypeScript Utility Types You Should Know"
+date: "2025-12-10"
+description: "A practical guide to the most useful TypeScript utility types for everyday development."
+coverImage: "/images/blog/typescript-tips.svg"
+tags: ["TypeScript", "JavaScript"]
+---
+
+TypeScript's built-in utility types can save you a lot of boilerplate. Here are the ones I reach for most often.
+
+## Pick and Omit
+
+Extract or exclude properties from a type:
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "user";
+}
+
+type UserPreview = Pick<User, "id" | "name">;
+// { id: string; name: string }
+
+type UserWithoutRole = Omit<User, "role">;
+// { id: string; name: string; email: string }
+```
+
+## Partial and Required
+
+Make all properties optional, or make them all required:
+
+```typescript
+type UpdateUser = Partial<User>;
+// All properties become optional
+
+type StrictUser = Required<User>;
+// All properties become required
+```
+
+`Partial` is especially useful for update functions where you only want to change some fields.
+
+## Record
+
+Create an object type with specific keys and value types:
+
+```typescript
+type Theme = "light" | "dark";
+type ThemeColors = Record<Theme, { bg: string; fg: string }>;
+
+const colors: ThemeColors = {
+  light: { bg: "#fff", fg: "#000" },
+  dark: { bg: "#000", fg: "#fff" },
+};
+```
+
+## ReturnType and Parameters
+
+Extract types from functions:
+
+```typescript
+function createUser(name: string, age: number) {
+  return { name, age, createdAt: new Date() };
+}
+
+type NewUser = ReturnType<typeof createUser>;
+// { name: string; age: number; createdAt: Date }
+
+type CreateUserParams = Parameters<typeof createUser>;
+// [string, number]
+```
+
+## Extract and Exclude
+
+Filter union types:
+
+```typescript
+type Status = "pending" | "active" | "archived" | "deleted";
+
+type ActiveStatus = Extract<Status, "pending" | "active">;
+// "pending" | "active"
+
+type VisibleStatus = Exclude<Status, "deleted">;
+// "pending" | "active" | "archived"
+```
+
+## Putting It Together
+
+These utilities compose well. Here's a real-world example:
+
+```typescript
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+  timestamp: string;
+}
+
+type BlogPost = {
+  id: string;
+  title: string;
+  content: string;
+  published: boolean;
+};
+
+// For creating a post — no id, published defaults
+type CreatePost = Omit<BlogPost, "id" | "published">;
+
+// API response wrapping a post
+type PostResponse = ApiResponse<BlogPost>;
+
+// Partial update
+type UpdatePost = Partial<Omit<BlogPost, "id">>;
+```
+
+The best TypeScript code reads almost like documentation. Utility types help you get there.

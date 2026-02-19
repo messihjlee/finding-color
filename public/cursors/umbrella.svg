@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Beach umbrella from top — hexagonal, off-black -->
+  <!-- Hexagon points: 16,4  26.39,10  26.39,22  16,28  5.61,22  5.61,10 -->
+  <polygon points="16,4 26.39,10 26.39,22 16,28 5.61,22 5.61,10" fill="#2a2a26" opacity="0.9"/>
+  <!-- Alternating segments -->
+  <path d="M16,16 L16,4 L26.39,10 Z" fill="#3a3a35" opacity="0.9"/>
+  <path d="M16,16 L26.39,10 L26.39,22 Z" fill="#2a2a26" opacity="0.9"/>
+  <path d="M16,16 L26.39,22 L16,28 Z" fill="#3a3a35" opacity="0.9"/>
+  <path d="M16,16 L16,28 L5.61,22 Z" fill="#2a2a26" opacity="0.9"/>
+  <path d="M16,16 L5.61,22 L5.61,10 Z" fill="#3a3a35" opacity="0.9"/>
+  <path d="M16,16 L5.61,10 L16,4 Z" fill="#2a2a26" opacity="0.9"/>
+  <!-- Edge -->
+  <polygon points="16,4 26.39,10 26.39,22 16,28 5.61,22 5.61,10" fill="none" stroke="#1a1a18" stroke-width="0.8" opacity="0.4"/>
+  <!-- Ribs -->
+  <line x1="16" y1="16" x2="16" y2="4" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <line x1="16" y1="16" x2="26.39" y2="10" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <line x1="16" y1="16" x2="26.39" y2="22" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <line x1="16" y1="16" x2="16" y2="28" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <line x1="16" y1="16" x2="5.61" y2="22" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <line x1="16" y1="16" x2="5.61" y2="10" stroke="#1a1a18" stroke-width="0.5" opacity="0.3"/>
+  <!-- Center pole -->
+  <circle cx="16" cy="16" r="1.8" fill="#e8e4de"/>
+  <circle cx="16" cy="16" r="1" fill="#1a1a18"/>
+</svg>

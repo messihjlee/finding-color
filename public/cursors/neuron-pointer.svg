@@ -1,0 +1,6 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer diamond glow for visibility -->
+  <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="none" stroke="white" stroke-width="2.5" opacity="0.35"/>
+  <!-- Filled diamond -->
+  <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="rgb(100,60,180)" stroke="rgb(80,40,160)" stroke-width="1.5" opacity="0.8"/>
+</svg>

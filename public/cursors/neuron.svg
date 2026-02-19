@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer diamond (subtle outline for visibility on any bg) -->
+  <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="none" stroke="white" stroke-width="2" opacity="0.35"/>
+  <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="rgba(100,60,180,0.1)" stroke="rgb(100,60,180)" stroke-width="1.2" opacity="0.6"/>
+  <!-- Inner solid diamond -->
+  <path d="M16 12 L20 16 L16 20 L12 16 Z" fill="rgb(100,60,180)" opacity="0.75"/>
+</svg>

@@ -1,0 +1,59 @@
+---
+title: "Getting Started with Next.js 15"
+date: "2026-01-15"
+description: "A quick look at what's new in Next.js 15 and how to get up and running with the App Router."
+coverImage: "/images/blog/getting-started-nextjs.svg"
+tags: ["Next.js", "React", "Web Dev"]
+---
+
+Next.js 15 brings significant improvements to the developer experience. Here's a quick overview of what's new and how to get started.
+
+## The App Router
+
+The App Router is now the default way to build Next.js applications. It uses React Server Components by default, which means less JavaScript shipped to the client.
+
+```tsx
+// app/page.tsx — a server component by default
+export default function Home() {
+  return <h1>Hello, world</h1>;
+}
+```
+
+## Key Features
+
+- **Server Components** — Render on the server, zero client-side JS by default
+- **Streaming** — Progressive rendering with Suspense boundaries
+- **Server Actions** — Mutate data without API routes
+- **Parallel Routes** — Render multiple pages simultaneously
+
+## Getting Started
+
+The quickest way to start a new project:
+
+```bash
+npx create-next-app@latest my-app --typescript --tailwind --app
+cd my-app
+npm run dev
+```
+
+This gives you a fully configured project with TypeScript, Tailwind CSS, and the App Router ready to go.
+
+## File-Based Routing
+
+Routes are defined by the filesystem. Create a file at `app/about/page.tsx` and it automatically becomes available at `/about`.
+
+```
+app/
+├── page.tsx          → /
+├── about/page.tsx    → /about
+├── blog/
+│   ├── page.tsx      → /blog
+│   └── [slug]/
+│       └── page.tsx  → /blog/:slug
+```
+
+This convention makes routing intuitive and keeps your project organized.
+
+> The best framework is the one that gets out of your way.
+
+Next.js 15 does exactly that — it lets you focus on building your product instead of fighting with configuration.
