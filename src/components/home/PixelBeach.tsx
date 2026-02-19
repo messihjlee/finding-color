@@ -27,7 +27,7 @@ function buildNavTexture(gridCols: number, gridRows: number) {
   const ctx = canvas.getContext("2d")!;
 
   // Use a small pixel font size so each character ≈ 5-6 grid cells wide
-  const fontSize = Math.max(8, Math.floor(gridRows * 0.044));
+  const fontSize = Math.max(6, Math.floor(gridRows * 0.022));
   ctx.font = `${fontSize}px monospace`;
   ctx.textBaseline = "top";
   ctx.fillStyle = "#fff";
@@ -85,7 +85,7 @@ const fragmentShader = /* glsl */ `
   uniform sampler2D uNavTex;
   uniform vec2 uNavTexSize;
 
-  const float CELL = 5.0;
+  const float CELL = 6.0;
   const float DOT_R = 0.3;
   const float PI = 3.14159265;
 
@@ -314,8 +314,8 @@ export function PixelBeach() {
     const dpr = 1; // cap at 1 — shader uses a 5px grid so higher DPR adds no quality
     const w = container.clientWidth;
     const h = container.clientHeight;
-    const gridCols = Math.floor(w / 5); // CELL = 5
-    const gridRows = Math.floor(h / 5);
+    const gridCols = Math.floor(w / 6); // CELL = 6
+    const gridRows = Math.floor(h / 6);
 
     // Build nav texture at grid resolution
     const navData = buildNavTexture(gridCols, gridRows);
@@ -387,8 +387,8 @@ export function PixelBeach() {
       uniforms.uResolution.value.set(rw * dpr, rh * dpr);
 
       // Rebuild nav texture at new size
-      const newGridCols = Math.floor(rw / 5);
-      const newGridRows = Math.floor(rh / 5);
+      const newGridCols = Math.floor(rw / 6);
+      const newGridRows = Math.floor(rh / 6);
       const newNavData = buildNavTexture(newGridCols, newGridRows);
       setNavPositions(newNavData.positions);
 
