@@ -116,10 +116,12 @@ export async function getPostBySlug(
   const blocks = await n2m.pageToMarkdown(page.id);
   const markdown = n2m.toMarkdownString(blocks);
 
-  // Escape bare angle brackets so MDX doesn't treat them as JSX tags
+  // Escape angle brackets that MDX would misinterpret as JSX tags
   const safeContent = markdown.parent
-    .replace(/<([^a-zA-Z/!])/g, "&lt;$1")
-    .replace(/([^"'\s])>/g, "$1&gt;");
+    // < followed by non-ASCII (Korean, etc.)
+    .replace(/<([^\x00-\x7F])/g, "&lt;$1")
+    // <...> where content contains & or non-ASCII (e.g. <Foo & Bar>)
+    .replace(/<([^>\n]*(?:&|[^\x00-\x7F])[^>\n]*)>/g, (_, inner) => `&lt;${inner}&gt;`);
 
   return pageToPost(page, safeContent);
 }
