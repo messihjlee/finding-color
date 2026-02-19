@@ -116,7 +116,12 @@ export async function getPostBySlug(
   const blocks = await n2m.pageToMarkdown(page.id);
   const markdown = n2m.toMarkdownString(blocks);
 
-  return pageToPost(page, markdown.parent);
+  // Escape bare angle brackets so MDX doesn't treat them as JSX tags
+  const safeContent = markdown.parent
+    .replace(/<([^a-zA-Z/!])/g, "&lt;$1")
+    .replace(/([^"'\s])>/g, "$1&gt;");
+
+  return pageToPost(page, safeContent);
 }
 
 export async function getAllSlugs(): Promise<string[]> {
