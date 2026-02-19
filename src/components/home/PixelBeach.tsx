@@ -109,7 +109,7 @@ const fragmentShader = /* glsl */ `
   float fbm(vec2 p) {
     float v = 0.0;
     float amp = 0.5;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 3; i++) {
       v += amp * noise(p);
       p *= 2.0;
       amp *= 0.5;
@@ -311,11 +311,11 @@ export function PixelBeach() {
     const container = containerRef.current;
     if (!container) return;
 
-    const dpr = window.devicePixelRatio;
+    const dpr = 1; // cap at 1 — shader uses a 5px grid so higher DPR adds no quality
     const w = container.clientWidth;
     const h = container.clientHeight;
-    const gridCols = Math.floor((w * dpr) / 5); // CELL = 5
-    const gridRows = Math.floor((h * dpr) / 5);
+    const gridCols = Math.floor(w / 5); // CELL = 5
+    const gridRows = Math.floor(h / 5);
 
     // Build nav texture at grid resolution
     const navData = buildNavTexture(gridCols, gridRows);
@@ -356,11 +356,15 @@ export function PixelBeach() {
     scene.add(new THREE.Mesh(geometry, material));
 
     const startTime = performance.now();
-    const loop = () => {
-      uniforms.uTime.value = (performance.now() - startTime) * 0.001;
+    let lastFrame = 0;
+    const FRAME_MS = 1000 / 30; // cap at 30fps
+    const loop = (now: number) => {
+      animRef.current = requestAnimationFrame(loop);
+      if (now - lastFrame < FRAME_MS) return;
+      lastFrame = now;
+      uniforms.uTime.value = (now - startTime) * 0.001;
       uniforms.uDark.value = document.documentElement.classList.contains("dark") ? 1.0 : 0.0;
       renderer.render(scene, camera);
-      animRef.current = requestAnimationFrame(loop);
     };
     animRef.current = requestAnimationFrame(loop);
 
@@ -383,8 +387,8 @@ export function PixelBeach() {
       uniforms.uResolution.value.set(rw * dpr, rh * dpr);
 
       // Rebuild nav texture at new size
-      const newGridCols = Math.floor((rw * dpr) / 5);
-      const newGridRows = Math.floor((rh * dpr) / 5);
+      const newGridCols = Math.floor(rw / 5);
+      const newGridRows = Math.floor(rh / 5);
       const newNavData = buildNavTexture(newGridCols, newGridRows);
       setNavPositions(newNavData.positions);
 
