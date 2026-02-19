@@ -120,6 +120,8 @@ export async function getPostBySlug(
   const safeContent = markdown.parent
     // < followed by non-ASCII (Korean, etc.)
     .replace(/<([^\x00-\x7F])/g, "&lt;$1")
+    // <Uppercase...> — not a valid HTML tag, MDX treats as JSX component
+    .replace(/<([A-Z][^>\n]*)>/g, (_, inner) => `&lt;${inner}&gt;`)
     // <...> where content contains & or non-ASCII (e.g. <Foo & Bar>)
     .replace(/<([^>\n]*(?:&|[^\x00-\x7F])[^>\n]*)>/g, (_, inner) => `&lt;${inner}&gt;`);
 
