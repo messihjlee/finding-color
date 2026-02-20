@@ -26,8 +26,7 @@ function buildNavTexture(gridCols: number, gridRows: number) {
   canvas.height = gridRows;
   const ctx = canvas.getContext("2d")!;
 
-  // Use a small pixel font size so each character ≈ 5-6 grid cells wide
-  const fontSize = Math.max(6, Math.floor(gridRows * 0.044));
+  const fontSize = Math.max(8, Math.floor(gridRows * 0.08));
   ctx.font = `${fontSize}px monospace`;
   ctx.textBaseline = "top";
   ctx.fillStyle = "#fff";
@@ -41,6 +40,10 @@ function buildNavTexture(gridCols: number, gridRows: number) {
   const gapPx = gridCols * NAV_REGION.spacing;
   const totalTextWidth = measurements.reduce((s, m) => s + m.width, 0);
   const totalWidth = totalTextWidth + (measurements.length - 1) * gapPx;
+  const maxPairWidth = Math.max(
+    measurements[0].width + gapPx + measurements[1].width,
+    measurements[2].width + gapPx + measurements[3].width
+  );
   const centerY = Math.floor(gridRows * NAV_REGION.y);
 
   // Draw and record positions
@@ -60,8 +63,8 @@ function buildNavTexture(gridCols: number, gridRows: number) {
       });
       curX += m.width + gapPx;
     }
-  } else {
-    // 2×2 grid layout for narrow screens (portrait mobile)
+  } else if (maxPairWidth <= gridCols) {
+    // 2×2 grid layout for narrow screens (portrait mobile, small font)
     const rowGap = fontSize;
     const blockStartY = Math.floor(centerY - fontSize - rowGap / 2);
     const rowYs = [blockStartY, blockStartY + fontSize + rowGap];
@@ -76,6 +79,24 @@ function buildNavTexture(gridCols: number, gridRows: number) {
       const rowWidth = rowItems.reduce((s, ri) => s + ri.width, 0) + (rowItems.length - 1) * gapPx;
       const rowStartX = Math.floor((gridCols - rowWidth) / 2);
       const curX = col === 0 ? rowStartX : rowStartX + rowItems[0].width + gapPx;
+
+      ctx.fillText(m.label, curX, textY);
+      positions.push({
+        left: curX / gridCols,
+        right: (curX + m.width) / gridCols,
+        top: textY / gridRows,
+        bottom: (textY + fontSize) / gridRows,
+      });
+    }
+  } else {
+    // 4-row vertical layout (portrait mobile with large font)
+    const rowSpacing = Math.floor(fontSize * 2);
+    const blockStartY = Math.floor(centerY - (3 * rowSpacing + fontSize) / 2);
+
+    for (let i = 0; i < measurements.length; i++) {
+      const m = measurements[i];
+      const textY = blockStartY + i * rowSpacing;
+      const curX = Math.floor((gridCols - m.width) / 2);
 
       ctx.fillText(m.label, curX, textY);
       positions.push({
