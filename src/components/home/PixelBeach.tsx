@@ -38,25 +38,53 @@ function buildNavTexture(gridCols: number, gridRows: number) {
     width: ctx.measureText(link.label).width,
   }));
 
-  const totalTextWidth = measurements.reduce((s, m) => s + m.width, 0);
   const gapPx = gridCols * NAV_REGION.spacing;
+  const totalTextWidth = measurements.reduce((s, m) => s + m.width, 0);
   const totalWidth = totalTextWidth + (measurements.length - 1) * gapPx;
-  const startX = Math.floor((gridCols - totalWidth) / 2);
-  const textY = Math.floor(gridRows * NAV_REGION.y);
+  const centerY = Math.floor(gridRows * NAV_REGION.y);
 
   // Draw and record positions
-  let curX = startX;
   const positions: { left: number; right: number; top: number; bottom: number }[] = [];
 
-  for (const m of measurements) {
-    ctx.fillText(m.label, curX, textY);
-    positions.push({
-      left: curX / gridCols,
-      right: (curX + m.width) / gridCols,
-      top: textY / gridRows,
-      bottom: (textY + fontSize) / gridRows,
-    });
-    curX += m.width + gapPx;
+  if (totalWidth <= gridCols) {
+    // Single-row horizontal layout (desktop / landscape)
+    const startX = Math.floor((gridCols - totalWidth) / 2);
+    let curX = startX;
+    for (const m of measurements) {
+      ctx.fillText(m.label, curX, centerY);
+      positions.push({
+        left: curX / gridCols,
+        right: (curX + m.width) / gridCols,
+        top: centerY / gridRows,
+        bottom: (centerY + fontSize) / gridRows,
+      });
+      curX += m.width + gapPx;
+    }
+  } else {
+    // 2×2 grid layout for narrow screens (portrait mobile)
+    const rowGap = fontSize;
+    const blockStartY = Math.floor(centerY - fontSize - rowGap / 2);
+    const rowYs = [blockStartY, blockStartY + fontSize + rowGap];
+
+    for (let i = 0; i < measurements.length; i++) {
+      const m = measurements[i];
+      const row = Math.floor(i / 2);
+      const col = i % 2;
+      const textY = rowYs[row];
+
+      const rowItems = measurements.slice(row * 2, row * 2 + 2);
+      const rowWidth = rowItems.reduce((s, ri) => s + ri.width, 0) + (rowItems.length - 1) * gapPx;
+      const rowStartX = Math.floor((gridCols - rowWidth) / 2);
+      const curX = col === 0 ? rowStartX : rowStartX + rowItems[0].width + gapPx;
+
+      ctx.fillText(m.label, curX, textY);
+      positions.push({
+        left: curX / gridCols,
+        right: (curX + m.width) / gridCols,
+        top: textY / gridRows,
+        bottom: (textY + fontSize) / gridRows,
+      });
+    }
   }
 
   // Read pixel data — we only need the red channel as brightness
