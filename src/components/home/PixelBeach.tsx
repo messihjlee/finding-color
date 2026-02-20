@@ -90,7 +90,7 @@ function buildNavTexture(gridCols: number, gridRows: number) {
     }
   } else {
     // 4-row vertical layout (portrait mobile with large font)
-    const rowSpacing = Math.floor(fontSize * 2);
+    const rowSpacing = Math.floor(fontSize * 1.3);
     const blockStartY = Math.floor(centerY - (3 * rowSpacing + fontSize) / 2);
 
     for (let i = 0; i < measurements.length; i++) {
