@@ -12,7 +12,7 @@ export function PublicationCard({ pub }: { pub: Publication }) {
     <article className="border-b border-border py-8 first:pt-0 last:border-b-0">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="text-lg font-semibold tracking-tight leading-snug">
+          <h2 className="text-xl font-semibold tracking-tight leading-snug">
             {linkUrl ? (
               <a
                 href={linkUrl}
@@ -43,7 +43,7 @@ export function PublicationCard({ pub }: { pub: Publication }) {
           </a>
         )}
       </div>
-      <p className="mt-3 text-sm text-muted leading-relaxed">
+      <p className="mt-3 text-base text-muted leading-relaxed">
         {pub.abstract}
       </p>
     </article>

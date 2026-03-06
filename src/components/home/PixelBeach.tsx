@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useTheme } from "next-themes";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as THREE from "three";
 
 const NAV_LINKS = [
@@ -133,6 +133,7 @@ const fragmentShader = /* glsl */ `
   uniform vec2 uMouse;
   uniform sampler2D uNavTex;
   uniform vec2 uNavTexSize;
+  uniform float uExit;
 
   const float CELL = 6.0;
   const float DOT_R = 0.3;
@@ -211,11 +212,18 @@ const fragmentShader = /* glsl */ `
     float t = uTime;
 
     // =============================================
+    // EXIT TRANSITION: water rises to flood screen
+    // ease-out so wave surges fast then slows
+    // =============================================
+    float exitT = uExit * (2.0 - uExit);
+
+    // =============================================
     // CLOSE-UP: looking down at waves hitting the shore
     // Water is flat/uniform — all action is at the edge
     // =============================================
 
-    float shoreY = 0.79;
+    // Shore moves down (water floods upward) during exit
+    float shoreY = 0.79 + exitT * 1.2;
 
     // --- Waves washing in and pulling out (vertical motion) ---
     float w1 = waveCurve(fract(t * 0.045), 0.3, 0.42);
@@ -336,6 +344,9 @@ const fragmentShader = /* glsl */ `
       }
     }
 
+    // Fade everything out during exit transition
+    brightness *= max(0.0, 1.0 - uExit * 1.4);
+
     if (brightness < 0.005) {
       gl_FragColor = vec4(bg, 1.0);
       return;
@@ -352,11 +363,15 @@ export function PixelBeach() {
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number>(0);
   const { resolvedTheme, setTheme } = useTheme();
+  const router = useRouter();
   const [navPositions, setNavPositions] = useState<
     { left: number; right: number; top: number; bottom: number }[]
   >([]);
 
-  const setup = useCallback(() => {
+  // Ref to trigger exit animation from nav click handlers
+  const triggerExitRef = useRef<((target: string) => void) | null>(null);
+
+  const setup = useCallback((onNavigate: (path: string) => void) => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -399,10 +414,23 @@ export function PixelBeach() {
       uMouse: new THREE.Uniform(new THREE.Vector2(-1, -1)),
       uNavTex: new THREE.Uniform(navTex),
       uNavTexSize: new THREE.Uniform(new THREE.Vector2(navData.width, navData.height)),
+      uExit: new THREE.Uniform(0),
     };
 
     const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
     scene.add(new THREE.Mesh(geometry, material));
+
+    const TRANSITION_MS = 5400; // full wave animation duration
+    const NAVIGATE_MS = 1800;   // navigate to next page after this many ms
+    const exitState = { active: false, startTime: 0, target: "", navigated: false };
+
+    // Expose exit trigger to nav click handlers
+    triggerExitRef.current = (target: string) => {
+      if (exitState.active) return;
+      exitState.active = true;
+      exitState.startTime = performance.now();
+      exitState.target = target;
+    };
 
     const startTime = performance.now();
     let lastFrame = 0;
@@ -413,6 +441,16 @@ export function PixelBeach() {
       lastFrame = now;
       uniforms.uTime.value = (now - startTime) * 0.001;
       uniforms.uDark.value = document.documentElement.classList.contains("dark") ? 1.0 : 0.0;
+
+      if (exitState.active) {
+        const elapsed = now - exitState.startTime;
+        uniforms.uExit.value = Math.min(elapsed / TRANSITION_MS, 1.0);
+        if (!exitState.navigated && elapsed >= NAVIGATE_MS) {
+          exitState.navigated = true;
+          onNavigate(exitState.target);
+        }
+      }
+
       renderer.render(scene, camera);
     };
     animRef.current = requestAnimationFrame(loop);
@@ -459,6 +497,7 @@ export function PixelBeach() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      triggerExitRef.current = null;
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMouseMove);
@@ -475,12 +514,17 @@ export function PixelBeach() {
 
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
-    const cleanup = setup();
+    const cleanup = setup((path) => router.push(path));
     return () => {
       document.documentElement.style.overflow = "";
       cleanup?.();
     };
-  }, [setup]);
+  }, [setup, router]);
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    triggerExitRef.current?.(href);
+  };
 
   const MARGIN = 30;
 
@@ -543,9 +587,10 @@ export function PixelBeach() {
 
       {/* Invisible click targets for nav — positioned over the shader text */}
       {navPositions.map((pos, i) => (
-        <Link
+        <a
           key={NAV_LINKS[i].href}
           href={NAV_LINKS[i].href}
+          onClick={(e) => handleNavClick(e, NAV_LINKS[i].href)}
           className="absolute z-20"
           style={{
             top: `calc(${MARGIN}px + ${pos.top} * (100vh - ${MARGIN * 2}px))`,
