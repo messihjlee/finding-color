@@ -18,7 +18,7 @@ export default function AboutPage() {
         }}
       >
         <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">
-          <div className="space-y-6 text-muted leading-relaxed text-lg md:text-xl">
+          <div className="space-y-6 text-muted leading-relaxed text-[15px] md:text-xl">
             <Image
               src="/images/profile_pic.png"
               alt="Messi H.J. Lee"

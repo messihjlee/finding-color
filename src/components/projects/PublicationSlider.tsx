@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { publications } from "@/lib/projects";
 import { PublicationCard } from "./ProjectCard";
 
-const ITEMS_PER_PAGE = 2;
-
 export function PublicationSlider() {
+  const [isMobile, setIsMobile] = useState(false);
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(publications.length / ITEMS_PER_PAGE);
-  const start = page * ITEMS_PER_PAGE;
-  const current = publications.slice(start, start + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const itemsPerPage = isMobile ? 1 : 2;
+  const totalPages = Math.ceil(publications.length / itemsPerPage);
+  const start = page * itemsPerPage;
+  const current = publications.slice(start, start + itemsPerPage);
 
   return (
     <div className="flex flex-col items-center w-full max-w-3xl px-2 md:px-4">

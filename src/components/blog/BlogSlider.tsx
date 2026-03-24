@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { BlogCard } from "./BlogCard";
 
-const ITEMS_PER_PAGE = 9;
-
 export function BlogSlider({ posts }: { posts: BlogPost[] }) {
+  const [isMobile, setIsMobile] = useState(false);
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
-  const start = page * ITEMS_PER_PAGE;
-  const current = posts.slice(start, start + ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const itemsPerPage = isMobile ? 6 : 9;
+  const totalPages = Math.ceil(posts.length / itemsPerPage);
+  const start = page * itemsPerPage;
+  const current = posts.slice(start, start + itemsPerPage);
 
   return (
     <div className="flex flex-col items-center w-full">
