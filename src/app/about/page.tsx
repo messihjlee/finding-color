@@ -25,9 +25,9 @@ export default function AboutPage() {
             <Image
               src="/images/profile_pic.png"
               alt="Messi H.J. Lee"
-              width={300}
-              height={300}
-              className="rounded-lg object-cover float-left mr-3 mb-2"
+              width={240}
+              height={240}
+              className="rounded-lg object-cover float-left mr-6 mb-3"
               priority
             />
             <p>
