@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import { GlobalHeader } from "@/components/ui/GlobalHeader";
 import { siteConfig } from "@/lib/constants";
 import "./globals.css";
 
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
         <Providers>
+          <GlobalHeader />
           {children}
         </Providers>
       </body>

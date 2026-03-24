@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Mail, Github, GraduationCap } from "lucide-react";
-import { SiteHeader } from "@/components/ui/SiteHeader";
-
 export const metadata: Metadata = {
   title: "Contact",
 };
@@ -36,43 +34,33 @@ export default function ContactPage() {
       style={{ background: "var(--background)", padding: MARGIN }}
     >
       <div
+        className="flex items-center justify-center"
         style={{
           border: "1px solid var(--foreground)",
           minHeight: `calc(100vh - ${MARGIN * 2}px)`,
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
         }}
       >
-        <div className="mx-auto max-w-3xl px-6 py-8 md:px-8">
-          <SiteHeader />
-
-          <h1 className="mt-8 text-3xl font-bold tracking-tight md:text-4xl">
-            Contact
-          </h1>
-          <p className="mt-4 text-muted">
-            Want to get in touch? Reach out through any of the links below.
-          </p>
-
-          <ul className="mt-12 space-y-6">
-            {links.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-4 text-foreground transition-colors hover:text-muted"
-                >
-                  <link.icon size={20} className="shrink-0" />
-                  <div>
-                    <div className="text-sm font-medium">{link.label}</div>
-                    <div className="text-muted group-hover:text-foreground transition-colors">
-                      {link.display}
-                    </div>
+        <ul className="space-y-10">
+          {links.map((link) => (
+            <li key={link.label}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-6 text-foreground transition-colors hover:text-muted"
+              >
+                <link.icon className="shrink-0 w-7 h-7 sm:w-9 sm:h-9" />
+                <div>
+                  <div className="text-xl font-medium sm:text-2xl">{link.label}</div>
+                  <div className="text-2xl text-muted transition-colors group-hover:text-foreground sm:text-3xl">
+                    {link.display}
                   </div>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

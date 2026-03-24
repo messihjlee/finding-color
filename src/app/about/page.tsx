@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/ui/SiteHeader";
-
+import Image from "next/image";
 export const metadata: Metadata = {
   title: "About",
 };
@@ -14,6 +13,7 @@ export default function AboutPage() {
       style={{ background: "var(--background)", padding: MARGIN }}
     >
       <div
+        className="flex items-center justify-center"
         style={{
           border: "1px solid var(--foreground)",
           minHeight: `calc(100vh - ${MARGIN * 2}px)`,
@@ -21,13 +21,15 @@ export default function AboutPage() {
         }}
       >
         <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">
-          <SiteHeader />
-
-          <h1 className="mt-8 text-3xl font-bold tracking-tight md:text-4xl">
-            About
-          </h1>
-
-          <div className="mt-10 space-y-6 text-muted leading-relaxed">
+          <div className="space-y-6 text-muted leading-relaxed text-lg md:text-xl">
+            <Image
+              src="/images/profile_pic.png"
+              alt="Messi H.J. Lee"
+              width={300}
+              height={300}
+              className="rounded-lg object-cover float-left mr-3 mb-2"
+              priority
+            />
             <p>
               Hi! I&apos;m Messi H.J. Lee. In May of 2025, I completed my PhD
               in Computational and Data Sciences at Washington University in St.
