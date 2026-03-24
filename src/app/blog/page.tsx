@@ -8,27 +8,23 @@ export const metadata: Metadata = {
   title: "Blog",
 };
 
-const MARGIN = 30;
-
 export default async function BlogPage() {
   const posts = await getAllPosts();
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", padding: MARGIN }}
+      className="min-h-screen p-4 md:p-[30px]"
+      style={{ background: "var(--background)" }}
     >
       <div
+        className="flex items-center justify-center px-4 pb-8 pt-8 min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-60px)]"
         style={{
           border: "1px solid var(--foreground)",
-          minHeight: `calc(100vh - ${MARGIN * 2}px)`,
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
         }}
       >
-        <div className="flex items-center justify-center px-4 pb-8 pt-8" style={{ minHeight: `calc(100vh - ${MARGIN * 2}px)` }}>
-          <div className="mx-auto w-full" style={{ maxWidth: "calc(100vh - 60px)" }}>
-            <BlogSlider posts={posts} />
-          </div>
+        <div className="mx-auto w-full max-w-3xl">
+          <BlogSlider posts={posts} />
         </div>
       </div>
     </div>

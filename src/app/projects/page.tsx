@@ -5,19 +5,16 @@ export const metadata: Metadata = {
   title: "Publications",
 };
 
-const MARGIN = 30;
-
 export default function ProjectsPage() {
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", padding: MARGIN }}
+      className="min-h-screen p-4 md:p-[30px]"
+      style={{ background: "var(--background)" }}
     >
       <div
-        className="flex items-center justify-center"
+        className="flex items-center justify-center min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-60px)]"
         style={{
           border: "1px solid var(--foreground)",
-          minHeight: `calc(100vh - ${MARGIN * 2}px)`,
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
         }}
       >

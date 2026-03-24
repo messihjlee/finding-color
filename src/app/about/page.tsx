@@ -4,19 +4,16 @@ export const metadata: Metadata = {
   title: "About",
 };
 
-const MARGIN = 30;
-
 export default function AboutPage() {
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", padding: MARGIN }}
+      className="min-h-screen p-4 md:p-[30px]"
+      style={{ background: "var(--background)" }}
     >
       <div
-        className="flex items-center justify-center"
+        className="flex items-center justify-center min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-60px)]"
         style={{
           border: "1px solid var(--foreground)",
-          minHeight: `calc(100vh - ${MARGIN * 2}px)`,
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
         }}
       >
@@ -27,7 +24,7 @@ export default function AboutPage() {
               alt="Messi H.J. Lee"
               width={240}
               height={240}
-              className="rounded-lg object-cover float-left mr-6 mb-3"
+              className="rounded-lg object-cover float-left mr-5 mb-3 w-36 h-36 md:w-60 md:h-60"
               priority
             />
             <p>

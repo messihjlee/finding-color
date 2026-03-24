@@ -22,7 +22,8 @@ export function PublicationSlider() {
           className="shrink-0 text-muted transition-colors hover:text-foreground disabled:opacity-30"
           aria-label="Previous page"
         >
-          <ChevronLeft size={40} />
+          <ChevronLeft size={24} className="sm:hidden" />
+          <ChevronLeft size={40} className="hidden sm:block" />
         </button>
 
         <div className="flex-1">
@@ -37,7 +38,8 @@ export function PublicationSlider() {
           className="shrink-0 text-muted transition-colors hover:text-foreground disabled:opacity-30"
           aria-label="Next page"
         >
-          <ChevronRight size={40} />
+          <ChevronRight size={24} className="sm:hidden" />
+          <ChevronRight size={40} className="hidden sm:block" />
         </button>
       </div>
 
