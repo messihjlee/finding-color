@@ -266,11 +266,13 @@ const fragmentShader = /* glsl */ `
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // DIAMOND CURSOR
+    // X CURSOR
     // ─────────────────────────────────────────────────────────────────────────
     if (uMouse.x > 0.0) {
       vec2 mc = floor(uMouse / CELL);
-      if (abs(cell.x - mc.x) + abs(cell.y - mc.y) <= 1.0) {
+      float dx = abs(cell.x - mc.x);
+      float dy = abs(cell.y - mc.y);
+      if (dx == dy && dx <= 2.0) {
         brightness = 0.9;
       }
     }
