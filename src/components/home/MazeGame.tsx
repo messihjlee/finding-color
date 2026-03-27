@@ -69,7 +69,7 @@ function clearCenter(grid: Cell[][], cols: number, rows: number) {
   }
 }
 
-const DESTINATIONS = ["/projects", "/blog", "/about", "/contact"];
+const DESTINATIONS = ["/blog", "/about", "/contact", "/projects"];
 
 export function MazeGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

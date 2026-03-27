@@ -4,8 +4,8 @@ import type { BlogPost } from "@/types";
 
 export function BlogCard({ post }: { post: BlogPost }) {
   return (
-    <Link href={`/blog/${post.slug}`} className="group relative block">
-      <div className="relative aspect-square overflow-hidden bg-card">
+    <Link href={`/blog/${post.slug}`} className="group relative block h-full">
+      <div className="relative w-full h-full overflow-hidden bg-card">
         {post.coverImage ? (
           <Image
             src={post.coverImage}

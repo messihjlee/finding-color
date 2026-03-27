@@ -23,7 +23,7 @@ export default async function BlogPage() {
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
         }}
       >
-        <div className="mx-auto w-full max-w-3xl">
+        <div className="mx-auto w-full">
           <BlogSlider posts={posts} />
         </div>
       </div>

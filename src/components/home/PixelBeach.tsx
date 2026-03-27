@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import * as THREE from "three";
 
 const NAV_LINKS = [
-  { href: "/projects", label: "projects" },
   { href: "/blog",     label: "blog"     },
   { href: "/about",    label: "about"    },
   { href: "/contact",  label: "contact"  },
+  { href: "/projects", label: "projects" },
 ];
 
 const NAV_REGION = {

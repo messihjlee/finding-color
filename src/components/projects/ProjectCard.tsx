@@ -9,10 +9,10 @@ export function PublicationCard({ pub }: { pub: Publication }) {
   const linkUrl = doiUrl || arxivUrl;
 
   return (
-    <article className="border-b border-border py-4 first:pt-0 last:border-b-0">
-      <div className="flex items-start justify-between gap-4">
+    <article>
+      <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
-          <h2 className="text-base font-semibold tracking-tight leading-snug md:text-xl">
+          <h2 className="text-2xl font-semibold tracking-tight leading-snug md:text-4xl">
             {linkUrl ? (
               <a
                 href={linkUrl}
@@ -26,8 +26,8 @@ export function PublicationCard({ pub }: { pub: Publication }) {
               pub.title
             )}
           </h2>
-          <p className="mt-1 text-xs text-muted md:text-sm">{pub.authors}</p>
-          <p className="mt-0.5 text-xs text-muted md:text-sm">
+          <p className="mt-2 text-base text-muted md:text-xl">{pub.authors}</p>
+          <p className="mt-1 text-base text-muted md:text-xl">
             {pub.venue} &middot; {pub.year}
           </p>
         </div>
@@ -39,11 +39,11 @@ export function PublicationCard({ pub }: { pub: Publication }) {
             className="shrink-0 text-muted transition-colors hover:text-foreground"
             aria-label={`View ${pub.title}`}
           >
-            <ExternalLink size={16} />
+            <ExternalLink size={28} />
           </a>
         )}
       </div>
-      <p className="mt-2 text-xs text-muted leading-relaxed line-clamp-3 md:text-sm md:line-clamp-4">
+      <p className="mt-6 text-base text-muted leading-relaxed md:text-xl">
         {pub.abstract}
       </p>
     </article>

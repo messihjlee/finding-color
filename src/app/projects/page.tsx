@@ -12,7 +12,7 @@ export default function ProjectsPage() {
       style={{ background: "var(--background)" }}
     >
       <div
-        className="flex items-center justify-center min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-60px)]"
+        className="flex items-stretch h-[calc(100dvh-2rem)] md:h-[calc(100dvh-60px)]"
         style={{
           border: "1px solid var(--foreground)",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",

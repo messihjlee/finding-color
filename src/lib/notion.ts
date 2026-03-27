@@ -84,12 +84,20 @@ function pageToPost(page: any, content = ""): BlogPost {
 export async function getAllPosts(): Promise<BlogPost[]> {
   const notion = getClient();
 
-  const response = await notion.databases.query({
-    database_id: DATABASE_ID,
-    sorts: [{ property: "date", direction: "descending" }],
-  });
+  const allResults: any[] = [];
+  let cursor: string | undefined;
 
-  return response.results
+  do {
+    const response = await notion.databases.query({
+      database_id: DATABASE_ID,
+      sorts: [{ property: "date", direction: "descending" }],
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    allResults.push(...response.results);
+    cursor = response.has_more && response.next_cursor ? response.next_cursor : undefined;
+  } while (cursor);
+
+  return allResults
     .filter((p: any) => "properties" in p)
     .map((page: any) => pageToPost(page));
 }
