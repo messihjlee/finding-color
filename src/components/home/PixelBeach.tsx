@@ -80,7 +80,7 @@ const fragmentShader = /* glsl */ `
   uniform vec2  uNavTexSize;
   uniform float uExit;
 
-  const float CELL  = 6.0;
+  const float CELL  = 3.0;
   const float DOT_R = 0.3;
   const float PI    = 3.14159265;
 
@@ -262,6 +262,49 @@ const fragmentShader = /* glsl */ `
         brightness = 0.01 + grain + wetness * 0.03 + sheen + residualFoam;
         brightness = clamp(brightness, 0.0, 0.14);
 
+        // ── FOOTSTEPS ───────────────────────────────────────────────────────
+        // One new footstep stamped per second, alternating left/right.
+        // Each imprint is fixed in place and fades over time.
+        float xStep    = 0.090 / ar;
+        float fadeSecs = 1.0 / xStep;   // fade as steps scroll off screen width
+        float curStep  = floor(t);
+
+        for (int s = 0; s < 10; s++) {
+          float idx = curStep - float(s);
+          float age = t - idx;
+          if (age > fadeSecs) { continue; }
+          float sx    = fract(idx * xStep + (noise(vec2(idx * 0.31, 2.0)) - 0.5) * xStep * 0.25);
+          float py   = 0.80 + (noise(vec2(idx * 0.45, 6.1)) - 0.5) * 0.06;
+          float side = mod(idx, 2.0) * 2.0 - 1.0;   // -1 or +1
+          float sy   = py + side * 12.0 * CELL / uResolution.y;
+
+          // Aspect-corrected delta from foot center
+          vec2  dv      = cell / gridCount - vec2(sx, sy);
+          float ex      = dv.x * ar;
+          float ey      = dv.y;
+          float inner   = -side;   // direction toward center path = big toe side
+
+          // Foot shape: heel + narrow bridge + ball + 5 toes — all one connected piece
+          bool inFoot = false;
+          // Heel
+          if (length(vec2((ex + 0.014) / 0.010, ey / 0.010)) < 1.0) inFoot = true;
+          // Narrow bridge connecting heel to ball (mid-foot)
+          if (length(vec2(ex / 0.008, ey / 0.006)) < 1.0)           inFoot = true;
+          // Ball — wider than heel
+          if (length(vec2((ex - 0.014) / 0.012, ey / 0.014)) < 1.0) inFoot = true;
+          // Toes — sit just past ball edge; big toe on inner side (toward center path)
+          if (length(vec2(ex - 0.028, ey - inner * 0.015)) < 0.006) inFoot = true; // big toe
+          if (length(vec2(ex - 0.032, ey - inner * 0.008)) < 0.005) inFoot = true; // 2nd
+          if (length(vec2(ex - 0.033, ey - inner * 0.001)) < 0.004) inFoot = true; // 3rd
+          if (length(vec2(ex - 0.031, ey + inner * 0.006)) < 0.004) inFoot = true; // 4th
+          if (length(vec2(ex - 0.027, ey + inner * 0.012)) < 0.003) inFoot = true; // pinky
+
+          if (inFoot) {
+            float fade = 1.0 - age / fadeSecs;
+            brightness = max(brightness, 0.70 * fade);
+          }
+        }
+
       }
     }
 
@@ -272,7 +315,7 @@ const fragmentShader = /* glsl */ `
       vec2 mc = floor(uMouse / CELL);
       float dx = abs(cell.x - mc.x);
       float dy = abs(cell.y - mc.y);
-      if (dx == dy && dx <= 2.0) {
+      if (dx == dy && dx <= 4.0) {
         brightness = 0.9;
       }
     }
