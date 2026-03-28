@@ -16,7 +16,7 @@ export function PublicationCard({ pub }: { pub: Publication }) {
     <article>
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
-          <h2 className="text-2xl font-semibold tracking-tight leading-snug md:text-4xl">
+          <h2 className="text-lg font-semibold tracking-tight leading-snug md:text-2xl">
             {linkUrl ? (
               <a
                 href={linkUrl}
@@ -30,7 +30,6 @@ export function PublicationCard({ pub }: { pub: Publication }) {
               truncate(pub.title, 100)
             )}
           </h2>
-          <p className="mt-2 text-base text-muted md:text-xl">{truncate(pub.authors, 80)}</p>
           <p className="mt-1 text-base text-muted md:text-xl">
             {pub.venue} &middot; {pub.year}
           </p>
