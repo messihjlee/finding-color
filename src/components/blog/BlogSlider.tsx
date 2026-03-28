@@ -25,16 +25,14 @@ export function BlogSlider({ posts }: { posts: BlogPost[] }) {
     const update = () => {
       const mobile = window.innerWidth < 640;
 
-      const outerVertPad = mobile ? 32 : 60;
+      const outerVertPad = Math.round(window.innerHeight * 0.03);
       const innerVertPad = 64;
       const availH = window.innerHeight - outerVertPad - innerVertPad;
       const cellH = Math.max(Math.floor((availH - (ROWS - 1) * GAP) / ROWS), 80);
 
-      const arrowSize = 0;
-      const outerHorizPad = mobile ? 32 : 60;
       const innerHorizPad = 32;
-      const availW = window.innerWidth - outerHorizPad - innerHorizPad - arrowSize;
-      const cellW = Math.max(Math.floor((availW * 0.9 - (COLS - 1) * GAP) / COLS), 80);
+      const availW = window.innerWidth - innerHorizPad;
+      const cellW = Math.max(Math.floor((availW - (COLS - 1) * GAP) / COLS), 80);
 
       setCellSize({ w: cellW, h: cellH });
     };

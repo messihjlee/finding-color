@@ -14,15 +14,14 @@ export default async function BlogPage() {
   return (
     <div
       className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh", paddingBottom: "3vh" }}
+      style={{ background: "var(--background)", paddingTop: "3vh" }}
     >
       <div
         className="flex items-center justify-center px-4 pb-8 pt-8"
         style={{
           borderTop: "1px solid",
-          borderBottom: "1px solid",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          minHeight: "calc(100dvh - 6vh)",
+          minHeight: "calc(100dvh - 3vh)",
         }}
       >
         <div className="mx-auto w-full">

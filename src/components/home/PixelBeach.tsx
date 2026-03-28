@@ -452,15 +452,14 @@ export function PixelBeach() {
       <div
         ref={containerRef}
         className="canvas-cursor absolute"
-        style={{ top: "3vh", left: 0, right: 0, bottom: "3vh" }}
+        style={{ top: "3vh", left: 0, right: 0, bottom: 0 }}
       />
 
       <div
         className="pointer-events-none absolute z-10"
         style={{
-          top: "3vh", left: 0, right: 0, bottom: "3vh",
+          top: "3vh", left: 0, right: 0, bottom: 0,
           borderTop: "1px solid var(--foreground)",
-          borderBottom: "1px solid var(--foreground)",
           opacity: 0.2,
         }}
       />
@@ -501,10 +500,10 @@ export function PixelBeach() {
           onClick={(e) => handleNavClick(e, NAV_LINKS[i].href)}
           className="absolute z-20"
           style={{
-            top:    `calc(3vh + ${pos.top}           * (100vh - 6vh))`,
+            top:    `calc(3vh + ${pos.top}           * (100vh - 3vh))`,
             left:   `calc(${pos.left}                * 100vw)`,
             width:  `calc(${pos.right  - pos.left}   * 100vw)`,
-            height: `calc(${pos.bottom - pos.top}    * (100vh - 6vh))`,
+            height: `calc(${pos.bottom - pos.top}    * (100vh - 3vh))`,
             padding: "8px 4px", margin: "-8px -4px",
             cursor: "none",
           }}
