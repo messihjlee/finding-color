@@ -27,8 +27,6 @@ export async function generateMetadata({
   };
 }
 
-const MARGIN = 30;
-
 export default async function BlogPostPage({
   params,
 }: {
@@ -42,13 +40,14 @@ export default async function BlogPostPage({
   return (
     <div
       className="min-h-screen"
-      style={{ background: "var(--background)", padding: MARGIN }}
+      style={{ background: "var(--background)", paddingTop: "3vh", paddingBottom: "3vh" }}
     >
       <div
         style={{
-          border: "1px solid var(--foreground)",
-          minHeight: `calc(100vh - ${MARGIN * 2}px)`,
+          borderTop: "1px solid",
+          borderBottom: "1px solid",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
+          minHeight: "calc(100dvh - 6vh)",
         }}
       >
         <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">

@@ -447,21 +447,20 @@ export function PixelBeach() {
     triggerExitRef.current?.(href);
   };
 
-  const MARGIN = 30;
-
   return (
     <div className="relative h-screen w-screen" style={{ background: "var(--background)" }}>
       <div
         ref={containerRef}
         className="canvas-cursor absolute"
-        style={{ top: MARGIN, left: MARGIN, right: MARGIN, bottom: MARGIN }}
+        style={{ top: "3vh", left: 0, right: 0, bottom: "3vh" }}
       />
 
       <div
         className="pointer-events-none absolute z-10"
         style={{
-          top: MARGIN, left: MARGIN, right: MARGIN, bottom: MARGIN,
-          border: "1px solid var(--foreground)",
+          top: "3vh", left: 0, right: 0, bottom: "3vh",
+          borderTop: "1px solid var(--foreground)",
+          borderBottom: "1px solid var(--foreground)",
           opacity: 0.2,
         }}
       />
@@ -470,7 +469,7 @@ export function PixelBeach() {
         onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
         className="absolute z-20"
         style={{
-          top: MARGIN - 20, right: MARGIN,
+          top: "calc(1.5vh - 7px)", left: "50%", transform: "translateX(-50%)",
           color: "var(--foreground)", opacity: 0.5,
           background: "none", border: "none", padding: 0, lineHeight: 1,
         }}
@@ -502,10 +501,10 @@ export function PixelBeach() {
           onClick={(e) => handleNavClick(e, NAV_LINKS[i].href)}
           className="absolute z-20"
           style={{
-            top:    `calc(${MARGIN}px + ${pos.top}            * (100vh - ${MARGIN * 2}px))`,
-            left:   `calc(${MARGIN}px + ${pos.left}           * (100vw - ${MARGIN * 2}px))`,
-            width:  `calc(${pos.right  - pos.left}            * (100vw - ${MARGIN * 2}px))`,
-            height: `calc(${pos.bottom - pos.top}             * (100vh - ${MARGIN * 2}px))`,
+            top:    `calc(3vh + ${pos.top}           * (100vh - 6vh))`,
+            left:   `calc(${pos.left}                * 100vw)`,
+            width:  `calc(${pos.right  - pos.left}   * 100vw)`,
+            height: `calc(${pos.bottom - pos.top}    * (100vh - 6vh))`,
             padding: "8px 4px", margin: "-8px -4px",
             cursor: "none",
           }}

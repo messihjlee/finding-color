@@ -1,6 +1,10 @@
 import type { Publication } from "@/lib/projects";
 import { ExternalLink } from "lucide-react";
 
+function truncate(text: string, max: number) {
+  return text.length > max ? text.slice(0, max) + "…" : text;
+}
+
 export function PublicationCard({ pub }: { pub: Publication }) {
   const doiUrl = pub.doi ? `https://doi.org/${pub.doi}` : undefined;
   const arxivUrl = pub.arxiv
@@ -20,13 +24,13 @@ export function PublicationCard({ pub }: { pub: Publication }) {
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-muted"
               >
-                {pub.title}
+                {truncate(pub.title, 100)}
               </a>
             ) : (
-              pub.title
+              truncate(pub.title, 100)
             )}
           </h2>
-          <p className="mt-2 text-base text-muted md:text-xl">{pub.authors}</p>
+          <p className="mt-2 text-base text-muted md:text-xl">{truncate(pub.authors, 80)}</p>
           <p className="mt-1 text-base text-muted md:text-xl">
             {pub.venue} &middot; {pub.year}
           </p>
@@ -44,7 +48,7 @@ export function PublicationCard({ pub }: { pub: Publication }) {
         )}
       </div>
       <p className="mt-6 text-base text-muted leading-relaxed md:text-xl">
-        {pub.abstract}
+        {truncate(pub.abstract, 280)}
       </p>
     </article>
   );

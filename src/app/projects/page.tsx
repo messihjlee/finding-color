@@ -8,14 +8,16 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <div
-      className="min-h-screen p-4 md:p-[30px]"
-      style={{ background: "var(--background)" }}
+      className="min-h-screen"
+      style={{ background: "var(--background)", paddingTop: "3vh", paddingBottom: "3vh" }}
     >
       <div
-        className="flex items-stretch h-[calc(100dvh-2rem)] md:h-[calc(100dvh-60px)]"
+        className="flex items-stretch"
         style={{
-          border: "1px solid var(--foreground)",
+          borderTop: "1px solid",
+          borderBottom: "1px solid",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
+          height: "calc(100dvh - 6vh)",
         }}
       >
         <PublicationSlider />

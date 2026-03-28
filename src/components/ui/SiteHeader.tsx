@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
-const MARGIN = 30;
-
 export function SiteHeader() {
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -12,8 +10,9 @@ export function SiteHeader() {
     <div
       className="fixed z-50 flex items-center gap-3"
       style={{
-        top: MARGIN - 20,
-        right: MARGIN,
+        top: "calc(1.5vh - 7px)",
+        left: "50%",
+        transform: "translateX(-50%)",
       }}
     >
       <Link

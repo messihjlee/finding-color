@@ -13,14 +13,16 @@ export default function AboutPage() {
 
   return (
     <div
-      className="min-h-screen p-4 md:p-[30px]"
-      style={{ background: "var(--background)" }}
+      className="min-h-screen"
+      style={{ background: "var(--background)", paddingTop: "3vh", paddingBottom: "3vh" }}
     >
       <div
-        className="flex items-center justify-center min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-60px)]"
+        className="flex items-center justify-center"
         style={{
-          border: "1px solid var(--foreground)",
+          borderTop: "1px solid",
+          borderBottom: "1px solid",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
+          minHeight: "calc(100dvh - 6vh)",
         }}
       >
         <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">
