@@ -17,16 +17,14 @@ export default async function BlogPage() {
       style={{ background: "var(--background)", paddingTop: "3vh" }}
     >
       <div
-        className="flex items-center justify-center px-4 pb-8 pt-8"
+        className="px-4 pb-8 pt-8"
         style={{
           borderTop: "1px solid",
           borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          minHeight: "calc(100dvh - 3vh)",
+          height: "calc(100dvh - 3vh)",
         }}
       >
-        <div className="mx-auto w-full">
-          <BlogSlider posts={posts} />
-        </div>
+        <BlogSlider posts={posts} />
       </div>
     </div>
   );
