@@ -122,17 +122,64 @@ export async function getPostBySlug(
   if (!page || !("properties" in page)) return null;
 
   const n2m = new NotionToMarkdown({ notionClient: notion });
+
+  // Placeholders let us insert JSX *after* the angle-bracket escaping runs,
+  // so S3 URLs with '&' in them don't get mangled.
+  const columnJSX = new Map<string, string>();
+
+  n2m.setCustomTransformer("column_list", async (block: any) => {
+    const { results: columns } = await notion.blocks.children.list({ block_id: block.id });
+
+    const columnItems: any[][] = await Promise.all(
+      columns.map(async (col: any) => {
+        const { results } = await notion.blocks.children.list({ block_id: col.id });
+        return results;
+      })
+    );
+
+    const placeholder = `__COLPLACEHOLDER_${block.id.replace(/-/g, "")}_END__`;
+
+    const allImages = columnItems.every(
+      (children) => children.length === 1 && children[0].type === "image"
+    );
+
+    if (allImages) {
+      const images = columnItems.map((children) => {
+        const img = children[0].image;
+        const src: string = img.type === "file" ? img.file.url : img.external.url;
+        const alt = img.caption?.map((c: any) => c.plain_text).join("") || "";
+        return { src, alt };
+      });
+      // Base64-encode so the JSX attribute is pure alphanumeric — no escaping issues.
+      const encoded = Buffer.from(JSON.stringify(images)).toString("base64");
+      columnJSX.set(placeholder, `<ColumnImages data="${encoded}" />`);
+    } else {
+      // Text columns: process as markdown (will be escaped normally)
+      const parts = await Promise.all(
+        columnItems.map(async (children) => {
+          const mdBlocks = await n2m.blocksToMarkdown(children as any);
+          return n2m.toMarkdownString(mdBlocks).parent || "";
+        })
+      );
+      columnJSX.set(placeholder, parts.join("\n\n"));
+    }
+
+    return placeholder;
+  });
+
   const blocks = await n2m.pageToMarkdown(page.id);
   const markdown = n2m.toMarkdownString(blocks);
 
   // Escape angle brackets that MDX would misinterpret as JSX tags
-  const safeContent = markdown.parent
-    // < followed by non-ASCII (Korean, etc.)
+  let safeContent = markdown.parent
     .replace(/<([^\x00-\x7F])/g, "&lt;$1")
-    // <Uppercase...> — not a valid HTML tag, MDX treats as JSX component
     .replace(/<([A-Z][^>\n]*)>/g, (_, inner) => `&lt;${inner}&gt;`)
-    // <...> where content contains & or non-ASCII (e.g. <Foo & Bar>)
     .replace(/<([^>\n]*(?:&|[^\x00-\x7F])[^>\n]*)>/g, (_, inner) => `&lt;${inner}&gt;`);
+
+  // Substitute placeholders after escaping
+  for (const [placeholder, jsx] of columnJSX) {
+    safeContent = safeContent.replace(placeholder, jsx);
+  }
 
   return pageToPost(page, safeContent);
 }

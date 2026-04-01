@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { MdxContent } from "@/components/blog/MdxContent";
 import { getPostBySlug, getAllSlugs } from "@/lib/notion";
@@ -49,7 +48,7 @@ export default async function BlogPostPage({
           minHeight: "calc(100dvh - 3vh)",
         }}
       >
-        <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">
+        <article className="mx-auto max-w-5xl px-6 py-8 md:px-8">
           <SiteHeader />
 
           <header className="mt-8">
@@ -76,18 +75,6 @@ export default async function BlogPostPage({
               </div>
             )}
           </header>
-
-          {post.coverImage && (
-            <div className="relative mt-10 aspect-[2/1] overflow-hidden rounded-lg border border-border">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          )}
 
           <div className="mt-12">
             <MdxContent source={post.content} />

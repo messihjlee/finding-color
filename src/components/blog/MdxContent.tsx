@@ -1,7 +1,28 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
 
+function ColumnImages({ data }: { data: string }) {
+  const images: { src: string; alt: string }[] = JSON.parse(
+    Buffer.from(data, "base64").toString("utf8")
+  );
+  return (
+    <div style={{ display: "flex", gap: "0.75rem", margin: "1.5rem 0" }}>
+      {images.map((img, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={i}
+          src={img.src}
+          alt={img.alt}
+          className="rounded-lg"
+          style={{ flex: 1, minWidth: 0, maxWidth: "100%", height: "auto" }}
+        />
+      ))}
+    </div>
+  );
+}
+
 const components = {
+  ColumnImages,
   h1: (props: React.ComponentProps<"h1">) => (
     <h1 className="mt-10 mb-4 text-3xl font-bold tracking-tight" {...props} />
   ),
@@ -24,7 +45,7 @@ const components = {
     <ol className="mb-4 list-decimal pl-6 space-y-1" {...props} />
   ),
   blockquote: (props: React.ComponentProps<"blockquote">) => (
-    <blockquote className="mb-4 border-l-2 border-border pl-4 italic text-muted" {...props} />
+    <blockquote className="mt-6 mb-4 border-l-2 border-border pl-4 italic text-muted" {...props} />
   ),
   code: (props: React.ComponentProps<"code">) => (
     <code className="rounded bg-card px-1.5 py-0.5 text-sm" {...props} />
@@ -34,7 +55,7 @@ const components = {
   ),
   img: (props: React.ComponentProps<"img">) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img className="my-6 rounded-lg" alt={props.alt ?? ""} {...props} />
+    <img className="rounded-lg max-w-full h-auto" alt={props.alt ?? ""} {...props} />
   ),
 };
 
