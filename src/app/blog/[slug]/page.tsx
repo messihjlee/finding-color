@@ -55,7 +55,7 @@ export default async function BlogPostPage({
             <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
               {post.title}
             </h1>
-            <time className="mt-3 block text-sm text-muted">
+            <time className="mt-3 block text-lg text-muted">
               {new Date(post.date).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -67,7 +67,16 @@ export default async function BlogPostPage({
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted"
+                    className="rounded-full px-3 py-1 text-base font-medium"
+                    style={
+                      tag === "books"
+                        ? { background: "#DBEDDB", color: "#1C7048" }
+                        : tag === "art"
+                        ? { background: "#FADEC9", color: "#C9700F" }
+                        : tag === "travel"
+                        ? { background: "#D3E5EF", color: "#0B6E99" }
+                        : { background: "#E3E2E0", color: "#6B6B6B" }
+                    }
                   >
                     {tag}
                   </span>

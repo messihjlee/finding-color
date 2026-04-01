@@ -44,6 +44,9 @@ const components = {
   ol: (props: React.ComponentProps<"ol">) => (
     <ol className="mb-4 list-decimal pl-6 space-y-1" {...props} />
   ),
+  hr: (props: React.ComponentProps<"hr">) => (
+    <hr className="my-4 border-border" {...props} />
+  ),
   blockquote: (props: React.ComponentProps<"blockquote">) => (
     <blockquote className="mt-6 mb-4 border-l-2 border-border pl-4 italic text-muted" {...props} />
   ),
