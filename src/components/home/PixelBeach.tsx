@@ -34,7 +34,7 @@ function buildNavTexture(gridCols: number, gridRows: number) {
   }));
 
   // Always 4-row vertical layout, tightly spaced
-  const rowSpacing  = Math.floor(fontSize * 1.1);
+  const rowSpacing  = Math.floor(fontSize * 1.2);
   const centerY     = Math.floor(gridRows * NAV_REGION.y);
   const blockStartY = Math.floor(centerY - (3 * rowSpacing + fontSize) / 2);
 
@@ -110,20 +110,6 @@ const fragmentShader = /* glsl */ `
     return v;
   }
 
-  // ─── wave shape ───────────────────────────────────────────────────────────
-  float waveCurve(float phase, float inEnd, float holdEnd) {
-    float fastIn = inEnd * 0.833;
-    if (phase < fastIn) {
-      float t2 = phase / fastIn;
-      return t2 * t2 * (3.0 - 2.0 * t2);
-    } else if (phase < holdEnd) {
-      return 1.0;
-    } else {
-      float t2 = 1.0 - (phase - holdEnd) / (1.0 - holdEnd);
-      return t2 * t2 * t2;
-    }
-  }
-
   float navLookup(vec2 cell, vec2 gridCount) {
     vec2 uv = cell / gridCount;
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return 0.0;
@@ -154,43 +140,40 @@ const fragmentShader = /* glsl */ `
     float t  = uTime;
     float ar = uResolution.x / uResolution.y;
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // EXIT TRANSITION
-    // ─────────────────────────────────────────────────────────────────────────
-    float exitT  = uExit * (2.0 - uExit);
-    float shoreY = 0.72 + exitT * 1.2;   // shore moves down → water floods screen
+    // Per-cycle predetermined bounds.
+    // Each cycle: water rushes from retreatY up to peakY, then retreats to next retreatY.
+    float cycleDur = 12.0;
+    float cycleIdx = floor(t / cycleDur);
+    float phase    = fract(t / cycleDur);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // TIDAL WAVE MOTION  (unchanged from original)
-    // ─────────────────────────────────────────────────────────────────────────
-    float w1 = waveCurve(fract(t * 0.045), 0.30, 0.42);
-    float w2 = waveCurve(fract(t * 0.038 + 0.5), 0.28, 0.38);
+    float retreatY = mix(0.20, 0.32, hash(vec2(cycleIdx,       0.0)));
+    float peakY    = mix(0.56, 0.72, hash(vec2(cycleIdx,       1.0)));
+    float nextY    = mix(0.20, 0.32, hash(vec2(cycleIdx + 1.0, 0.0)));
 
-    float reachMod = 0.6 + 0.4 * noise(vec2(t * 0.025, 0.0))
-                         + 0.3 * (sin(t * 0.1) * 0.5 + 0.5);
-    float waveReach = mix(0.0, 0.43 * reachMod, max(w1, w2));
+    float shoreWobble = (fbm(vec2(nx * 6.0  + t * 0.15, t * 0.08      )) - 0.5) * 0.18
+                      + (fbm(vec2(nx * 12.0 - t * 0.10, t * 0.06 + 5.0)) - 0.5) * 0.09;
 
-    float shoreWobble = (fbm(vec2(nx * 6.0  + t * 0.15,  t * 0.08      )) - 0.5) * 0.20
-                      + (fbm(vec2(nx * 12.0 - t * 0.10,  t * 0.06 + 5.0)) - 0.5) * 0.10;
+    // Fast rush in (35% of cycle), slow retreat (65%)
+    float waterLine = phase < 0.35
+      ? mix(retreatY, peakY, smoothstep(0.0, 1.0, phase / 0.35))
+      : mix(peakY, nextY,    smoothstep(0.0, 1.0, (phase - 0.35) / 0.65));
+    waterLine += shoreWobble;
 
-    float waterLine  = shoreY + shoreWobble - waveReach;
+    // Wet line: same formula evaluated 1 second behind
+    float tD        = t - 1.0;
+    float cycleIdxD = floor(tD / cycleDur);
+    float phaseD    = fract(tD / cycleDur);
+    float retreatYD = mix(0.20, 0.32, hash(vec2(cycleIdxD,       0.0)));
+    float peakYD    = mix(0.56, 0.72, hash(vec2(cycleIdxD,       1.0)));
+    float nextYD    = mix(0.20, 0.32, hash(vec2(cycleIdxD + 1.0, 0.0)));
+    float wobbleD   = (fbm(vec2(nx * 6.0  + tD * 0.15, tD * 0.08      )) - 0.5) * 0.18
+                    + (fbm(vec2(nx * 12.0 - tD * 0.10, tD * 0.06 + 5.0)) - 0.5) * 0.09;
+    float wetLine = phaseD < 0.35
+      ? mix(retreatYD, peakYD, smoothstep(0.0, 1.0, phaseD / 0.35))
+      : mix(peakYD, nextYD,    smoothstep(0.0, 1.0, (phaseD - 0.35) / 0.65));
+    wetLine += wobbleD;
 
-    float fingerBase = fbm(vec2(nx * 18.0 + t * 0.1, ny * 8.0));
-    float fingers    = max(0.0, fingerBase - 0.5) * 0.06;
-    float tendrilLine = waterLine + fingers;
-
-    bool isWater   = ny < waterLine;
-    bool isTendril = ny < tendrilLine && !isWater;
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // WET-SAND MAX REACH  (2-sample approximation — was a 5-iteration loop)
-    // ─────────────────────────────────────────────────────────────────────────
-    float pw1 = waveCurve(fract((t - 0.7) * 0.045), 0.30, 0.42);
-    float pw2 = waveCurve(fract((t - 0.7) * 0.038 + 0.5), 0.28, 0.38);
-    float pastReachMod = 0.6 + 0.4 * noise(vec2((t - 0.7) * 0.025, 0.0))
-                             + 0.3 * (sin((t - 0.7) * 0.1) * 0.5 + 0.5);
-    float pastReach = mix(0.0, 0.43 * pastReachMod, max(pw1, pw2));
-    float maxReach  = max(waveReach * 0.95, pastReach * 0.65);
+    bool isWater = ny < waterLine;
 
     // ─────────────────────────────────────────────────────────────────────────
     // NAV TEXT
@@ -205,61 +188,36 @@ const fragmentShader = /* glsl */ `
     // angles. Their interference creates drifting bright nodes that look like
     // sunlight refracted through moving water.
     // ─────────────────────────────────────────────────────────────────────────
-    if (isWater || isTendril) {
+    if (isWater) {
 
-      if (isTendril) {
-        // Thin water film creeping on sand — keep the subtle sheen
-        float sheen = fbm(vec2(nx * 24.0 + t * 0.6, ny * 16.0)) * 0.08 + 0.04;
-        brightness  = sheen;
+      // ── Flat open water ───────────────────────────────────────────────
+      float depthFromShore = waterLine - ny;
+      brightness = 0.02;
 
-      } else {
-        // ── Flat open water ───────────────────────────────────────────────
-        float depthFromShore = waterLine - ny;
-        brightness = 0.02;
+      // Foam at the leading shore edge
+      float foamZone = 0.022;
+      if (depthFromShore < foamZone) {
+        float leadingEdge = smoothstep(foamZone, 0.002, depthFromShore);
+        brightness = max(brightness, leadingEdge * 0.85);
 
-        // Foam at the leading shore edge
-        float foamZone = 0.022;
-        if (depthFromShore < foamZone) {
-          float leadingEdge = smoothstep(foamZone, 0.002, depthFromShore);
-          brightness = max(brightness, leadingEdge * 0.85);
-
-          float foamTex = fbm(vec2(nx * 22.0 + t * 0.8, ny * 16.0 - t * 0.4));
-          float foam    = smoothstep(foamZone, 0.005, depthFromShore)
-                        * smoothstep(0.35, 0.60, foamTex) * 0.45;
-          brightness = max(brightness, foam);
-        }
-
-        brightness = clamp(brightness, 0.0, 1.0);
+        float foamTex = fbm(vec2(nx * 22.0 + t * 0.8, ny * 16.0 - t * 0.4));
+        float foam    = smoothstep(foamZone, 0.005, depthFromShore)
+                      * smoothstep(0.35, 0.60, foamTex) * 0.45;
+        brightness = max(brightness, foam);
       }
+
+      brightness = clamp(brightness, 0.0, 1.0);
 
     } else {
       // ─────────────────────────────────────────────────────────────────────
       // SAND
       // ─────────────────────────────────────────────────────────────────────
       if (isNav > 0.3) {
-        float distToWater = ny - tendrilLine;
-        float dissolve = smoothstep(0.0, 0.04, distToWater);
-        float ripple   = 1.0;
-        if (distToWater < 0.04) {
-          ripple = step(0.3, hash(cell * 0.37 + floor(vec2(t * 3.0))));
-        }
-        brightness = 0.9 * dissolve * ripple;
-
+        float mask = smoothstep(wetLine - 0.02, wetLine, ny);
+        brightness = mix(0.2, 0.9, mask);
       } else {
-        float distFromWater = ny - tendrilLine;
-        float grain         = hash(cell * 0.71) * 0.018;
-
-        float wetness = smoothstep(maxReach + 0.01, 0.0, distFromWater);
-        float sheen   = smoothstep(0.04, 0.0, distFromWater) * 0.07;
-
-        float residualFoam = 0.0;
-        if (distFromWater < maxReach + 0.02) {
-          float foamPattern  = fbm(vec2(nx * 28.0, ny * 20.0 + t * 0.03));
-          residualFoam = smoothstep(0.48, 0.65, foamPattern)
-                       * smoothstep(maxReach + 0.02, 0.003, distFromWater) * 0.07;
-        }
-
-        brightness = 0.01 + grain + wetness * 0.03 + sheen + residualFoam;
+        float grain = hash(cell * 0.71) * 0.018;
+        brightness = 0.01 + grain;
         brightness = clamp(brightness, 0.0, 0.14);
 
         // ── FOOTSTEPS ───────────────────────────────────────────────────────
@@ -304,9 +262,10 @@ const fragmentShader = /* glsl */ `
             brightness = max(brightness, 0.70 * fade);
           }
         }
-
       }
     }
+
+
 
     // ─────────────────────────────────────────────────────────────────────────
     // X CURSOR
