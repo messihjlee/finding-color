@@ -1,7 +1,8 @@
-import { publications } from "@/lib/projects";
+import { getPublications } from "@/lib/projects";
 import { PublicationCard } from "./ProjectCard";
 
 export function ProjectList() {
+  const publications = getPublications();
   const selected = publications.filter((p) => p.selected);
   const others = publications.filter((p) => !p.selected);
 
