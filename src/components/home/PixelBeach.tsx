@@ -75,7 +75,6 @@ const fragmentShader = /* glsl */ `
   uniform vec2  uResolution;
   uniform float uTime;
   uniform float uDark;
-  uniform vec2  uMouse;
   uniform sampler2D uNavTex;
   uniform vec2  uNavTexSize;
   uniform float uExit;
@@ -268,18 +267,6 @@ const fragmentShader = /* glsl */ `
 
 
     // ─────────────────────────────────────────────────────────────────────────
-    // X CURSOR
-    // ─────────────────────────────────────────────────────────────────────────
-    if (uMouse.x > 0.0) {
-      vec2 mc = floor(uMouse / CELL);
-      float dx = abs(cell.x - mc.x);
-      float dy = abs(cell.y - mc.y);
-      if (dx == dy && dx <= 4.0) {
-        brightness = 0.9;
-      }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
     // EXIT FADE
     // ─────────────────────────────────────────────────────────────────────────
     brightness *= max(0.0, 1.0 - uExit * 1.4);
@@ -342,7 +329,6 @@ export function PixelBeach() {
       uResolution: new THREE.Uniform(new THREE.Vector2(w * dpr, h * dpr)),
       uTime:       new THREE.Uniform(0),
       uDark:       new THREE.Uniform(isDark),
-      uMouse:      new THREE.Uniform(new THREE.Vector2(-1, -1)),
       uNavTex:     new THREE.Uniform(navTex),
       uNavTexSize: new THREE.Uniform(new THREE.Vector2(navData.width, navData.height)),
       uExit:       new THREE.Uniform(0),
@@ -384,16 +370,6 @@ export function PixelBeach() {
     };
     animRef.current = requestAnimationFrame(loop);
 
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      uniforms.uMouse.value.set(
-        (e.clientX - rect.left) * dpr,
-        (e.clientY - rect.top)  * dpr
-      );
-    };
-    const onMouseLeave = () => { uniforms.uMouse.value.set(-1, -1); };
-    window.addEventListener("mousemove",  onMouseMove);
-    container.addEventListener("mouseleave", onMouseLeave);
 
     const onResize = () => {
       const rw = container.clientWidth;
@@ -423,8 +399,6 @@ export function PixelBeach() {
       triggerExitRef.current = null;
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize",     onResize);
-      window.removeEventListener("mousemove",  onMouseMove);
-      container.removeEventListener("mouseleave", onMouseLeave);
       renderer.dispose();
       geometry.dispose();
       material.dispose();
@@ -453,7 +427,7 @@ export function PixelBeach() {
     <div className="relative h-screen w-screen" style={{ background: "var(--background)" }}>
       <div
         ref={containerRef}
-        className="canvas-cursor absolute"
+        className="absolute"
         style={{ top: "3vh", left: 0, right: 0, bottom: 0 }}
       />
 
@@ -507,7 +481,6 @@ export function PixelBeach() {
             width:  `calc(${pos.right  - pos.left}   * 100vw)`,
             height: `calc(${pos.bottom - pos.top}    * (100vh - 3vh))`,
             padding: "8px 4px", margin: "-8px -4px",
-            cursor: "none",
           }}
           aria-label={NAV_LINKS[i].label}
         />

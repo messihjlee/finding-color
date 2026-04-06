@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { PublicationSlider } from "@/components/projects/PublicationSlider";
+import { getPublications } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "Publications",
 };
 
 export default function ProjectsPage() {
+  const publications = getPublications();
+
   return (
     <div
       className="min-h-screen"
@@ -19,7 +22,7 @@ export default function ProjectsPage() {
           height: "calc(100dvh - 3vh)",
         }}
       >
-        <PublicationSlider />
+        <PublicationSlider publications={publications} />
       </div>
     </div>
   );

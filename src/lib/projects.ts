@@ -1,118 +1,142 @@
+import fs from "fs";
+import path from "path";
+
 export interface Publication {
   title: string;
   authors: string;
   year: number;
   venue: string;
+  url?: string;
   doi?: string;
   arxiv?: string;
+  pdf?: string;
   abstract: string;
   selected: boolean;
 }
 
-export const publications: Publication[] = [
-  {
-    title: "Implicit Bias-Like Patterns in Reasoning Models",
-    authors: "Lee, Messi H. J. and Lai, Calvin K.",
-    year: 2025,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2503.11572",
-    arxiv: "2503.11572",
-    abstract:
-      "Implicit biases refer to automatic mental processes that shape perceptions, judgments, and behaviors. We present the Reasoning Model Implicit Association Test (RM-IAT) to study implicit bias-like processing in reasoning models. Using RM-IAT, we find that reasoning models consistently expend more reasoning tokens on association-incompatible tasks than association-compatible tasks, suggesting greater computational effort when processing counter-stereotypical information.",
-    selected: true,
-  },
-  {
-    title:
-      "Demographic Biases in Political Ideology Attribution by Vision-Language Models",
-    authors:
-      "Jeon, Soyeon and Lee, Messi H.J. and Montgomery, Jacob M. and Lai, Calvin K.",
-    year: 2025,
-    venue: "Preprint",
-    abstract:
-      "When foundation models analyze political content, do they use demographic characteristics as shortcuts for ideological attribution? We conducted detailed experiments with GPT-4o-mini and validated key findings across GPT-4o and LLaVA. All models consistently attributed more liberal ideologies to women than men, with effects exceeding real-world gender differences.",
-    selected: false,
-  },
-  {
-    title:
-      "Visual Cues of Gender and Race Are Associated with Stereotyping in Vision-Language Models",
-    authors:
-      "Lee, Messi H. J. and Jeon, Soyeon and Montgomery, Jacob M. and Lai, Calvin K.",
-    year: 2025,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2503.05093",
-    arxiv: "2503.05093",
-    abstract:
-      "Using standardized facial images that vary in prototypicality, we test four VLMs for both trait associations and homogeneity bias in open-ended contexts. We find that VLMs consistently generate more uniform stories for women compared to men, with people who are more gender prototypical in appearance being represented more uniformly.",
-    selected: false,
-  },
-  {
-    title:
-      "Homogeneity Bias as Differential Sampling Uncertainty in Language Models",
-    authors: "Lee, Messi H. J. and Jeon, Soyeon",
-    year: 2025,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2501.19337",
-    arxiv: "2501.19337",
-    abstract:
-      "We propose that homogeneity bias emerges from systematic differences in the probability distributions from which tokens are sampled at inference-time. Analyzing three measures of uncertainty, we find that in some models tokens are sampled more deterministically when generating texts about marginalized groups compared to dominant group counterparts.",
-    selected: false,
-  },
-  {
-    title:
-      "Examining the Robustness of Homogeneity Bias to Hyperparameter Adjustments in GPT-4",
-    authors: "Lee, Messi H. J.",
-    year: 2025,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2501.02211",
-    arxiv: "2501.02211",
-    abstract:
-      "We investigate how homogeneity bias responds to hyperparameter adjustments in GPT-4, specifically examining sampling temperature and top p. We find that homogeneity bias persists across most hyperparameter configurations and that hyperparameter adjustments affect racial and gender homogeneity bias differently.",
-    selected: false,
-  },
-  {
-    title:
-      "Vision-Language Models Generate More Homogeneous Stories for Phenotypically Black Individuals",
-    authors: "Lee, Messi H. J. and Jeon, Soyeon",
-    year: 2025,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2412.09668",
-    arxiv: "2412.09668",
-    abstract:
-      "This study investigates homogeneity bias within Black Americans, examining how perceived racial phenotypicality influences VLMs' outputs. Our findings reveal that VLMs generate significantly more homogeneous stories about Black individuals with higher phenotypicality compared to those with lower phenotypicality.",
-    selected: true,
-  },
-  {
-    title:
-      "Probability of Differentiation Reveals Brittleness of Homogeneity Bias in Large Language Models",
-    authors: "Lee, Messi H. J. and Lai, Calvin K.",
-    year: 2024,
-    venue: "arXiv",
-    doi: "10.48550/arXiv.2407.07329",
-    arxiv: "2407.07329",
-    abstract:
-      "We find that homogeneity bias is highly volatile across situation cues and writing prompts, suggesting that the bias observed in past work may reflect those within encoder models rather than LLMs. Furthermore, homogeneity bias in LLMs is brittle, as even minor and arbitrary changes in prompts can significantly alter the expression of biases.",
-    selected: false,
-  },
-  {
-    title:
-      "Large Language Models Portray Socially Subordinate Groups as More Homogeneous, Consistent with a Bias Observed in Humans",
-    authors: "Lee, Messi H.J. and Montgomery, Jacob M. and Lai, Calvin K.",
-    year: 2024,
-    venue: "FAccT '24",
-    doi: "10.1145/3630106.3658975",
-    abstract:
-      "We investigate a new form of bias in LLMs that resembles a social psychological phenomenon where socially subordinate groups are perceived as more homogeneous than socially dominant groups. We consistently found that ChatGPT portrayed African, Asian, and Hispanic Americans as more homogeneous than White Americans.",
-    selected: true,
-  },
-  {
-    title:
-      "America's Racial Framework of Superiority and Americanness Embedded in Natural Language",
-    authors: "Lee, Messi H. J. and Montgomery, Jacob M. and Lai, Calvin K.",
-    year: 2024,
-    venue: "PNAS Nexus",
-    doi: "10.1093/pnasnexus/pgad485",
-    abstract:
-      "We investigated America's racial framework in a corpus of spoken and written language using word embeddings. We found that America's racial framework is embedded in American English, with Asian people stereotyped as more American than Hispanic people.",
-    selected: false,
-  },
-];
+function stripBraces(s: string): string {
+  return s.replace(/[{}]/g, "");
+}
+
+function parseFields(body: string): Record<string, string> {
+  const fields: Record<string, string> = {};
+  const commaIdx = body.indexOf(",");
+  if (commaIdx === -1) return fields;
+
+  let i = commaIdx + 1;
+
+  while (i < body.length) {
+    while (i < body.length && /[\s,]/.test(body[i])) i++;
+    if (i >= body.length) break;
+
+    const nameStart = i;
+    while (i < body.length && body[i] !== "=" && !/\s/.test(body[i])) i++;
+    const name = body.slice(nameStart, i).trim().toLowerCase();
+
+    while (i < body.length && /\s/.test(body[i])) i++;
+    if (i >= body.length || body[i] !== "=") break;
+    i++; // skip '='
+
+    while (i < body.length && /\s/.test(body[i])) i++;
+
+    let value = "";
+    if (i < body.length && body[i] === "{") {
+      let depth = 1;
+      i++;
+      const valueStart = i;
+      while (i < body.length && depth > 0) {
+        if (body[i] === "{") depth++;
+        else if (body[i] === "}") depth--;
+        i++;
+      }
+      value = body.slice(valueStart, i - 1);
+    } else if (i < body.length && body[i] === '"') {
+      i++;
+      const valueStart = i;
+      while (i < body.length && body[i] !== '"') i++;
+      value = body.slice(valueStart, i);
+      i++;
+    } else {
+      const valueStart = i;
+      while (
+        i < body.length &&
+        body[i] !== "," &&
+        body[i] !== "\n" &&
+        body[i] !== "}"
+      )
+        i++;
+      value = body.slice(valueStart, i).trim();
+    }
+
+    if (name) fields[name] = value;
+  }
+
+  return fields;
+}
+
+function parseEntries(
+  content: string
+): Array<{ type: string; fields: Record<string, string> }> {
+  const entries: Array<{ type: string; fields: Record<string, string> }> = [];
+  let i = 0;
+
+  while (i < content.length) {
+    const atIdx = content.indexOf("@", i);
+    if (atIdx === -1) break;
+
+    const braceIdx = content.indexOf("{", atIdx);
+    if (braceIdx === -1) break;
+
+    const type = content.slice(atIdx + 1, braceIdx).trim().toLowerCase();
+
+    let depth = 1;
+    let j = braceIdx + 1;
+    while (j < content.length && depth > 0) {
+      if (content[j] === "{") depth++;
+      else if (content[j] === "}") depth--;
+      j++;
+    }
+
+    const body = content.slice(braceIdx + 1, j - 1);
+    entries.push({ type, fields: parseFields(body) });
+    i = j;
+  }
+
+  return entries;
+}
+
+function toPublication(
+  type: string,
+  fields: Record<string, string>
+): Publication | null {
+  const title = stripBraces(fields.title ?? "");
+  const authors = stripBraces(fields.author ?? "");
+  const year = parseInt(fields.year ?? "0", 10);
+  const abstract = stripBraces(fields.abstract ?? "");
+  const selected = fields.selected === "true";
+  const url = fields.url || undefined;
+  const doi = fields.doi || undefined;
+  const arxiv = fields.eprint || undefined;
+  const pdf = fields.pdf || undefined;
+
+  let venue = "";
+  if (type === "article") {
+    venue = stripBraces(fields.journal ?? "");
+  } else if (type === "inproceedings") {
+    venue = stripBraces(fields.series ?? fields.booktitle ?? "");
+  } else {
+    venue = stripBraces(fields.publisher ?? "");
+  }
+
+  if (!title || !authors || !year) return null;
+
+  return { title, authors, year, venue, url, doi, arxiv, pdf, abstract, selected };
+}
+
+export function getPublications(): Publication[] {
+  const bibPath = path.join(process.cwd(), "content", "papers.bib");
+  const content = fs.readFileSync(bibPath, "utf-8");
+  return parseEntries(content)
+    .map(({ type, fields }) => toPublication(type, fields))
+    .filter((p): p is Publication => p !== null);
+}

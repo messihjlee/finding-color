@@ -29,14 +29,6 @@
 }
 
 
-/* Hide cursor only on the WebGL canvas container */
-.canvas-cursor {
-  cursor: none;
-}
-.canvas-cursor canvas {
-  cursor: none;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);

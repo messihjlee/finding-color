@@ -1,5 +1,5 @@
 import type { Publication } from "@/lib/projects";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, FileText } from "lucide-react";
 
 function truncate(text: string, max: number) {
   return text.length > max ? text.slice(0, max) + "…" : text;
@@ -10,7 +10,8 @@ export function PublicationCard({ pub }: { pub: Publication }) {
   const arxivUrl = pub.arxiv
     ? `https://arxiv.org/abs/${pub.arxiv}`
     : undefined;
-  const linkUrl = doiUrl || arxivUrl;
+  const linkUrl = pub.url || doiUrl || arxivUrl;
+  const pdfUrl = pub.pdf ? `/papers/${pub.pdf}` : undefined;
 
   return (
     <article>
@@ -34,17 +35,30 @@ export function PublicationCard({ pub }: { pub: Publication }) {
             {pub.venue} &middot; {pub.year}
           </p>
         </div>
-        {linkUrl && (
-          <a
-            href={linkUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 text-muted transition-colors hover:text-foreground"
-            aria-label={`View ${pub.title}`}
-          >
-            <ExternalLink size={28} />
-          </a>
-        )}
+        <div className="flex items-center gap-3 shrink-0">
+          {pdfUrl && (
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted transition-colors hover:text-foreground"
+              aria-label={`PDF: ${pub.title}`}
+            >
+              <FileText size={28} />
+            </a>
+          )}
+          {linkUrl && (
+            <a
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted transition-colors hover:text-foreground"
+              aria-label={`View ${pub.title}`}
+            >
+              <ExternalLink size={28} />
+            </a>
+          )}
+        </div>
       </div>
       <p className="mt-6 text-base text-muted leading-relaxed md:text-xl">
         {truncate(pub.abstract, 280)}

@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { publications } from "@/lib/projects";
+import type { Publication } from "@/lib/projects";
 import { PublicationCard } from "./ProjectCard";
 
-export function PublicationSlider() {
+export function PublicationSlider({ publications }: { publications: Publication[] }) {
   const [page, setPage] = useState(0);
 
   const itemsPerPage = 1;
