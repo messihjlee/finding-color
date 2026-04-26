@@ -13,29 +13,33 @@ export default function AboutPage() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh" }}
+      style={{
+        minHeight: "100svh",
+        background: "var(--background)",
+        paddingTop: 36,
+      }}
     >
       <div
-        className="flex items-center justify-center"
         style={{
-          borderTop: "1px solid",
-          borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          minHeight: "calc(100dvh - 3vh)",
+          borderTop: "1px solid var(--border)",
+          minHeight: "calc(100svh - 36px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <article className="mx-auto max-w-3xl px-6 py-8 md:px-8">
-          <div className="flex justify-center mb-6">
+        <article style={{ maxWidth: 680, width: "100%", padding: "32px 24px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
             <Image
               src="/images/profile_pic.png"
               alt="Messi H.J. Lee"
-              width={200}
-              height={200}
-              className="rounded-lg object-cover w-[200px] h-[200px]"
+              width={160}
+              height={160}
+              style={{ objectFit: "cover", width: 160, height: 160 }}
               priority
             />
           </div>
-          <div className="text-muted text-[15px] md:text-xl">
+          <div style={{ color: "var(--muted)", fontSize: 15 }}>
             <MdxContent source={content} />
           </div>
         </article>

@@ -4,19 +4,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #e8e4de;
-  --foreground: #1a1a18;
-  --muted: #7a7872;
-  --border: #ccc8c0;
-  --card: #f0ece6;
+  --background: #f4f2ee;
+  --foreground: #0e0f11;
+  --muted: #717480;
+  --border: #1e2128;
+  --card: #eae7e1;
 }
 
 .dark {
-  --background: #1a1a18;
-  --foreground: #f5f2ed;
-  --muted: #d0ccc4;
-  --border: #2e2e2a;
-  --card: #242420;
+  --background: #0e0f11;
+  --foreground: #d8dce5;
+  --muted: #616978;
+  --border: #d8dce5;
+  --card: #13151a;
 }
 
 @theme inline {
@@ -25,20 +25,22 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-card: var(--card);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-space-grotesk);
 }
-
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-size: 18px;
-  line-height: 1.7;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 ::selection {
   background-color: var(--foreground);
   color: var(--background);
+}
+
+* {
+  box-sizing: border-box;
 }

@@ -13,15 +13,17 @@ export default async function BlogPage() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh" }}
+      style={{
+        minHeight: "100svh",
+        background: "var(--background)",
+        paddingTop: 36,
+      }}
     >
       <div
-        className="px-4 pb-8 pt-8"
         style={{
-          borderTop: "1px solid",
-          borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          height: "calc(100dvh - 3vh)",
+          borderTop: "1px solid var(--border)",
+          height: "calc(100svh - 36px)",
+          padding: "24px 16px",
         }}
       >
         <BlogSlider posts={posts} />

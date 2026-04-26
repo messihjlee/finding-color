@@ -20,17 +20,19 @@ export function BlogSlider({ posts }: { posts: BlogPost[] }) {
   const [sampled] = useState(() => sample9(posts));
 
   return (
-    <div className="w-full h-full">
+    <div style={{ width: "100%", height: "100%" }}>
       <div
-        className="grid w-full h-full"
         style={{
+          display: "grid",
           gridTemplateColumns: `repeat(${COLS}, 1fr)`,
           gridTemplateRows: `repeat(${ROWS}, 1fr)`,
           gap: 12,
+          width: "100%",
+          height: "100%",
         }}
       >
         {sampled.map((post) => (
-          <div key={post.slug} className="min-h-0 min-w-0">
+          <div key={post.slug} style={{ minHeight: 0, minWidth: 0 }}>
             <BlogCard post={post} />
           </div>
         ))}

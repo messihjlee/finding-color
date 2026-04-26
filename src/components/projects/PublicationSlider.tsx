@@ -8,25 +8,58 @@ import { PublicationCard } from "./ProjectCard";
 export function PublicationSlider({ publications }: { publications: Publication[] }) {
   const [page, setPage] = useState(0);
 
-  const itemsPerPage = 1;
-  const totalPages = Math.ceil(publications.length / itemsPerPage);
-  const start = page * itemsPerPage;
-  const current = publications.slice(start, start + itemsPerPage);
+  const PER_PAGE = 3;
+  const totalPages = Math.ceil(publications.length / PER_PAGE);
+  const current = publications.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+
+  const btnStyle = (disabled: boolean): React.CSSProperties => ({
+    background: "none",
+    border: "1px solid var(--border)",
+    color: disabled ? "var(--border)" : "var(--muted)",
+    padding: "8px",
+    cursor: disabled ? "default" : "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  });
 
   return (
-    <div className="flex flex-col w-[90%] mx-auto h-full py-10 md:py-16">
-      <div className="flex items-center w-full gap-4 flex-1">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "90%",
+        maxWidth: 800,
+        margin: "0 auto",
+        height: "100%",
+        padding: "40px 0",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 10,
+          letterSpacing: "0.18em",
+          color: "var(--muted)",
+          textTransform: "uppercase",
+          marginBottom: 8,
+        }}
+      >
+        PUBLICATIONS
+      </div>
+      <div style={{ height: 1, background: "var(--border)", marginBottom: 32 }} />
+
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 20, flex: 1 }}>
         <button
           onClick={() => setPage((p) => Math.max(0, p - 1))}
           disabled={page === 0}
-          className="shrink-0 text-muted transition-colors hover:text-foreground disabled:opacity-30"
-          aria-label="Previous page"
+          style={btnStyle(page === 0)}
+          aria-label="Previous"
         >
-          <ChevronLeft size={28} className="sm:hidden" />
-          <ChevronLeft size={40} className="hidden sm:block" />
+          <ChevronLeft size={20} />
         </button>
 
-        <div className="flex-1 mx-auto overflow-y-auto">
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
           {current.map((pub) => (
             <PublicationCard key={pub.title} pub={pub} />
           ))}
@@ -35,17 +68,25 @@ export function PublicationSlider({ publications }: { publications: Publication[
         <button
           onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
           disabled={page === totalPages - 1}
-          className="shrink-0 text-muted transition-colors hover:text-foreground disabled:opacity-30"
-          aria-label="Next page"
+          style={btnStyle(page === totalPages - 1)}
+          aria-label="Next"
         >
-          <ChevronRight size={28} className="sm:hidden" />
-          <ChevronRight size={40} className="hidden sm:block" />
+          <ChevronRight size={20} />
         </button>
       </div>
 
-      <span className="mt-6 text-center text-base text-muted">
+      <div
+        style={{
+          marginTop: 24,
+          textAlign: "center",
+          fontSize: 10,
+          letterSpacing: "0.12em",
+          color: "var(--muted)",
+          textTransform: "uppercase",
+        }}
+      >
         {page + 1} / {totalPages}
-      </span>
+      </div>
     </div>
   );
 }

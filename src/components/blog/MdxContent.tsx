@@ -13,7 +13,6 @@ function ColumnImages({ data }: { data: string }) {
           key={i}
           src={img.src}
           alt={img.alt}
-          className="rounded-lg"
           style={{ flex: 1, minWidth: 0, maxWidth: "100%", height: "auto" }}
         />
       ))}
@@ -36,7 +35,7 @@ const components = {
     <p className="mb-4 leading-relaxed" {...props} />
   ),
   a: (props: React.ComponentProps<"a">) => (
-    <a className="underline underline-offset-4 transition-colors hover:text-muted" {...props} />
+    <a className="underline underline-offset-4 hover:text-muted" {...props} />
   ),
   ul: (props: React.ComponentProps<"ul">) => (
     <ul className="mb-4 list-disc pl-6 space-y-1" {...props} />
@@ -51,14 +50,14 @@ const components = {
     <blockquote className="mt-6 mb-4 border-l-2 border-border pl-4 italic text-muted" {...props} />
   ),
   code: (props: React.ComponentProps<"code">) => (
-    <code className="rounded bg-card px-1.5 py-0.5 text-sm" {...props} />
+    <code className="bg-card px-1.5 py-0.5 text-sm" {...props} />
   ),
   pre: (props: React.ComponentProps<"pre">) => (
-    <pre className="mb-4 overflow-x-auto rounded-lg border border-border bg-card p-4 text-sm" {...props} />
+    <pre className="mb-4 overflow-x-auto border border-border bg-card p-4 text-sm" {...props} />
   ),
   img: (props: React.ComponentProps<"img">) => (
     // eslint-disable-next-line @next/next/no-img-element
-    <img className="rounded-lg max-w-full h-auto" alt={props.alt ?? ""} {...props} />
+    <img style={{ maxWidth: "100%", height: "auto" }} alt={props.alt ?? ""} {...props} />
   ),
 };
 

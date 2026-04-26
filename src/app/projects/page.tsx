@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PublicationSlider } from "@/components/projects/PublicationSlider";
+import { PublicationGrid } from "@/components/projects/PublicationGrid";
 import { getPublications } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -11,18 +11,20 @@ export default function ProjectsPage() {
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh" }}
+      style={{
+        minHeight: "100svh",
+        background: "var(--background)",
+        paddingTop: 36,
+      }}
     >
       <div
-        className="flex items-stretch"
         style={{
-          borderTop: "1px solid",
-          borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          height: "calc(100dvh - 3vh)",
+          borderTop: "1px solid var(--border)",
+          height: "calc(100svh - 36px)",
+          padding: "24px 16px",
         }}
       >
-        <PublicationSlider publications={publications} />
+        <PublicationGrid publications={publications} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Mail, Github, GraduationCap } from "lucide-react";
+
 export const metadata: Metadata = {
   title: "Contact",
 };
@@ -28,37 +29,75 @@ const links = [
 export default function ContactPage() {
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh" }}
+      style={{
+        minHeight: "100svh",
+        background: "var(--background)",
+        paddingTop: 36,
+      }}
     >
       <div
-        className="flex items-center justify-center"
         style={{
-          borderTop: "1px solid",
-          borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          minHeight: "calc(100dvh - 3vh)",
+          borderTop: "1px solid var(--border)",
+          minHeight: "calc(100svh - 36px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <ul className="space-y-10">
-          {links.map((link) => (
-            <li key={link.label}>
+        <div style={{ width: 360 }}>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.18em",
+              color: "var(--muted)",
+              textTransform: "uppercase",
+              marginBottom: 8,
+            }}
+          >
+            CONTACT
+          </div>
+          <div style={{ height: 1, background: "var(--border)", marginBottom: 24 }} />
+
+          <div style={{ border: "1px solid var(--border)" }}>
+            {links.map((link, i) => (
               <a
+                key={link.label}
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-6 text-foreground transition-colors hover:text-muted"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "16px",
+                  borderBottom:
+                    i < links.length - 1 ? "1px solid var(--border)" : undefined,
+                  color: "var(--muted)",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                }}
               >
-                <link.icon className="shrink-0 w-7 h-7 sm:w-9 sm:h-9" />
+                <link.icon size={16} style={{ flexShrink: 0, color: "var(--muted)" }} />
                 <div>
-                  <div className="text-xl font-medium sm:text-2xl">{link.label}</div>
-                  <div className="text-2xl text-muted transition-colors group-hover:text-foreground sm:text-3xl">
+                  <div
+                    style={{
+                      fontSize: 10,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color: "var(--foreground)",
+                      marginBottom: 2,
+                    }}
+                  >
+                    {link.label}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--muted)" }}>
                     {link.display}
                   </div>
                 </div>
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

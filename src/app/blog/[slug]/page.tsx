@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SiteHeader } from "@/components/ui/SiteHeader";
 import { MdxContent } from "@/components/blog/MdxContent";
 import { getPostBySlug, getAllSlugs } from "@/lib/notion";
 
@@ -26,6 +25,12 @@ export async function generateMetadata({
   };
 }
 
+const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  books:  { bg: "#1a2a1a", color: "#4caf6e" },
+  art:    { bg: "#2a1e12", color: "#c97d3a" },
+  travel: { bg: "#111e2a", color: "#3a88c9" },
+};
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -38,24 +43,41 @@ export default async function BlogPostPage({
 
   return (
     <div
-      className="min-h-screen"
-      style={{ background: "var(--background)", paddingTop: "3vh" }}
+      style={{
+        minHeight: "100svh",
+        background: "var(--background)",
+        paddingTop: 36,
+      }}
     >
       <div
         style={{
-          borderTop: "1px solid",
-          borderColor: "color-mix(in srgb, var(--foreground) 20%, transparent)",
-          minHeight: "calc(100dvh - 3vh)",
+          borderTop: "1px solid var(--border)",
+          minHeight: "calc(100svh - 36px)",
         }}
       >
-        <article className="mx-auto max-w-5xl px-6 py-8 md:px-8">
-          <SiteHeader />
-
-          <header className="mt-8">
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+        <article style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px" }}>
+          <header style={{ marginBottom: 48 }}>
+            <h1
+              style={{
+                fontSize: 22,
+                fontWeight: 600,
+                letterSpacing: "0.01em",
+                color: "var(--foreground)",
+                marginBottom: 12,
+              }}
+            >
               {post.title}
             </h1>
-            <time className="mt-3 block text-lg text-muted">
+            <time
+              style={{
+                display: "block",
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                color: "var(--muted)",
+                textTransform: "uppercase",
+                marginBottom: 16,
+              }}
+            >
               {new Date(post.date).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
@@ -63,29 +85,31 @@ export default async function BlogPostPage({
               })}
             </time>
             {post.tags.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full px-3 py-1 text-base font-medium"
-                    style={
-                      tag === "books"
-                        ? { background: "#DBEDDB", color: "#1C7048" }
-                        : tag === "art"
-                        ? { background: "#FADEC9", color: "#C9700F" }
-                        : tag === "travel"
-                        ? { background: "#D3E5EF", color: "#0B6E99" }
-                        : { background: "#E3E2E0", color: "#6B6B6B" }
-                    }
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {post.tags.map((tag) => {
+                  const c = TAG_COLORS[tag] ?? { bg: "#1a1c22", color: "#616978" };
+                  return (
+                    <span
+                      key={tag}
+                      style={{
+                        background: c.bg,
+                        color: c.color,
+                        fontSize: 10,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        padding: "4px 10px",
+                        border: `1px solid ${c.color}30`,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  );
+                })}
               </div>
             )}
           </header>
 
-          <div className="mt-12">
+          <div style={{ color: "var(--muted)" }}>
             <MdxContent source={post.content} />
           </div>
         </article>

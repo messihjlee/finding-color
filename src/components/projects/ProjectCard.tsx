@@ -7,23 +7,48 @@ function truncate(text: string, max: number) {
 
 export function PublicationCard({ pub }: { pub: Publication }) {
   const doiUrl = pub.doi ? `https://doi.org/${pub.doi}` : undefined;
-  const arxivUrl = pub.arxiv
-    ? `https://arxiv.org/abs/${pub.arxiv}`
-    : undefined;
+  const arxivUrl = pub.arxiv ? `https://arxiv.org/abs/${pub.arxiv}` : undefined;
   const linkUrl = pub.url || doiUrl || arxivUrl;
   const pdfUrl = pub.pdf ? `/papers/${pub.pdf}` : undefined;
 
+  const iconBtnStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    color: "var(--muted)",
+    textDecoration: "none",
+    cursor: "pointer",
+  };
+
   return (
-    <article>
-      <div className="flex items-start justify-between gap-6">
-        <div className="min-w-0">
-          <h2 className="text-lg font-semibold tracking-tight leading-snug md:text-2xl">
+    <article style={{ border: "1px solid var(--border)", padding: "24px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+          marginBottom: 8,
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: "0.14em",
+              color: "var(--muted)",
+              textTransform: "uppercase",
+              marginBottom: 10,
+            }}
+          >
+            {pub.venue} · {pub.year}
+          </div>
+          <h2 style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.4, color: "var(--foreground)", margin: 0 }}>
             {linkUrl ? (
               <a
                 href={linkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-muted"
+                style={{ color: "inherit", textDecoration: "none" }}
               >
                 {truncate(pub.title, 100)}
               </a>
@@ -31,37 +56,39 @@ export function PublicationCard({ pub }: { pub: Publication }) {
               truncate(pub.title, 100)
             )}
           </h2>
-          <p className="mt-1 text-base text-muted md:text-xl">
-            {pub.venue} &middot; {pub.year}
-          </p>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+
+        <div style={{ display: "flex", gap: 12, flexShrink: 0, paddingTop: 4 }}>
           {pdfUrl && (
-            <a
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted transition-colors hover:text-foreground"
-              aria-label={`PDF: ${pub.title}`}
-            >
-              <FileText size={28} />
+            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" style={iconBtnStyle} aria-label={`PDF: ${pub.title}`}>
+              <FileText size={18} />
             </a>
           )}
           {linkUrl && (
-            <a
-              href={linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted transition-colors hover:text-foreground"
-              aria-label={`View ${pub.title}`}
-            >
-              <ExternalLink size={28} />
+            <a href={linkUrl} target="_blank" rel="noopener noreferrer" style={iconBtnStyle} aria-label={`View ${pub.title}`}>
+              <ExternalLink size={18} />
             </a>
           )}
         </div>
       </div>
-      <p className="mt-6 text-base text-muted leading-relaxed md:text-xl">
-        {truncate(pub.abstract, 280)}
+
+      <div
+        style={{
+          height: 1,
+          background: "var(--border)",
+          margin: "16px 0",
+        }}
+      />
+
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--muted)",
+          lineHeight: 1.7,
+          margin: 0,
+        }}
+      >
+        {truncate(pub.abstract, 320)}
       </p>
     </article>
   );
